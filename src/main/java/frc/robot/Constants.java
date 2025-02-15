@@ -9,11 +9,11 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
 public class Constants {
     public static class ChassisConstants{
-        public static final int k_leftLeaderId = 4; 
-        public static final int k_leftFollowerId = 5;
-        public static final int k_rightLeaderId = 2;  
-        public static final int k_rightFollowerID = 3;
-        public static final int k_pygeonId = 13;
+        public static final int k_leftLeader = 4; 
+        public static final int k_leftFollower = 5;
+        public static final int k_rightLeader = 2;  
+        public static final int k_rightFollower = 3;
+        public static final int k_pygeon = 13;
 
         public static final int k_statorLimit = 140;
         public static final int k_supplyLimit = 65;
@@ -53,4 +53,16 @@ public class Constants {
         public static final double kHighAlgaeHeight = 42.5;
     }
 
+    public static class AlgueConstants{
+        public static final int k_AlgueMotor = 28;
+        public static final int k_brazoMotor = 29;
+
+        public static final double k_position = 24.0;
+    }
+
+    public static class CoralConstants{
+        
+        public static final  int k_rightMotor = 12;
+        public static final  int k_leftMotor = 14;
+    }
 }

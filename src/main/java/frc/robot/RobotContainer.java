@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.CoralShooter;
+import frc.robot.subsystems.Desalguificador;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Elevator;
 
 public class RobotContainer {
   
   private final CommandXboxController joy_drive = new CommandXboxController(1);
+  private final CommandXboxController joy_op = new CommandXboxController(2);
   private final DriveTrain tankDrive = new DriveTrain();
   
 
@@ -23,9 +25,12 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    joy_drive.a().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL2(), Elevator.getInstance()));
+    /*joy_drive.a().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL2(), Elevator.getInstance()));
     joy_drive.b().whileTrue(new RunCommand(() -> Elevator.getInstance().goToAlgaeLow(), Elevator.getInstance()));
-    joy_drive.x().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL4(), Elevator.getInstance()));
+    joy_drive.x().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL4(), Elevator.getInstance()));*/
+    joy_op.a().whileTrue(Desalguificador.getInstance().pruebaBrazo());
+    joy_op.b().whileTrue(Desalguificador.getInstance().pruebaAlgas());
+    joy_op.x().whileTrue(CoralShooter.getInstance().pruebaAlgas());
   }
 
   public Command getAutonomousCommand() {

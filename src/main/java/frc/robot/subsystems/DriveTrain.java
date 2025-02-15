@@ -12,9 +12,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.controller.PIDController;
+/*import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;*/
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,10 +43,10 @@ public class DriveTrain extends SubsystemBase {
   private Encoder m_leftEncoder = new Encoder(3, 4);
 
   //Odometry and ClosedLoopControl
-  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
+  /*private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
   private PIDController LeftPIDController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
-  private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
+  private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);*/
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
 
   public DriveTrain() {
@@ -54,11 +54,11 @@ public class DriveTrain extends SubsystemBase {
     rightOut = new DutyCycleOut(0);
 
     //Initialize Hardware
-    m_leftLeader = new TalonFX(ChassisConstants.k_leftLeaderId);
-    m_leftFollower = new TalonFX(ChassisConstants.k_leftFollowerId);
-    m_rightLeader = new TalonFX(ChassisConstants.k_rightLeaderId);
-    m_rightFollower = new TalonFX(ChassisConstants.k_rightFollowerID);
-    m_gyro = new Pigeon2(ChassisConstants.k_pygeonId);
+    m_leftLeader = new TalonFX(ChassisConstants.k_leftLeader);
+    m_leftFollower = new TalonFX(ChassisConstants.k_leftFollower);
+    m_rightLeader = new TalonFX(ChassisConstants.k_rightLeader);
+    m_rightFollower = new TalonFX(ChassisConstants.k_rightFollower);
+    m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
 
     //Motor configuration
     m_currentConfig.StatorCurrentLimitEnable = true;
