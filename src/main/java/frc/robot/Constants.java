@@ -29,8 +29,8 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final  int k_rightMotor = 9;
-        public static final  int k_leftMotor = 8;
+        public static final  int k_rightMotor = 8;
+        public static final  int k_leftMotor = 7;
 
         public static final double k_elevatorKP = 0.05;
         public static final double k_elevatorKI = 0;
@@ -54,15 +54,15 @@ public class Constants {
     }
 
     public static class AlgueConstants{
-        public static final int k_AlgueMotor = 28;
-        public static final int k_brazoMotor = 29;
+        public static final int k_AlgueMotor = 6;
+        public static final int k_brazoMotor = 11;
 
         public static final double k_position = 24.0;
     }
 
     public static class CoralConstants{
         
-        public static final  int k_rightMotor = 12;
-        public static final  int k_leftMotor = 14;
+        public static final  int k_rightMotor = 10;
+        public static final  int k_leftMotor = 12;
     }
 }

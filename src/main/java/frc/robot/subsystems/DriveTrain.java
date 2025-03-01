@@ -105,8 +105,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void controlledDrive(double fwd, double rot){
-    double x = Math.abs(fwd) > 0.09 ? -fwd*0.5 : 0;
-    double y = Math.abs(rot) > 0.09 ? rot*0.5 : 0;
+    double x = Math.abs(fwd) > 0.09 ? -fwd*0.6 : 0;
+    double y = Math.abs(rot) > 0.09 ? rot*0.6 : 0;
     leftOut.Output = x + y;
     rightOut.Output = x - y;
     m_leftLeader.setControl(leftOut);

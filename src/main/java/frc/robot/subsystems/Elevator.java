@@ -17,10 +17,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase {
+  //No intentes entender esto aza, solo cambia las constantes si quieres cambiar la altura
   /** Creates a new Elevator. */
   private PeriodicIO mPeriodicIO;
   private static Elevator mInstance;
@@ -95,7 +98,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-      double curTime = Timer.getFPGATimestamp();
+       double curTime = Timer.getFPGATimestamp();
       double dt = curTime - prevUpdateTime;
       prevUpdateTime = curTime;
       if (mPeriodicIO.is_elevator_pos_control) {
@@ -118,10 +121,11 @@ public class Elevator extends SubsystemBase {
         mCurState.velocity = 0;
         mLeftMotor.set(mPeriodicIO.elevator_power);}
       
+      SmartDashboard.putNumber("Elevador", mLeftEncoder.getPosition());
   }
 
-  
-  public void writePeriodicOutputs() {
+  //ni puta idea que hace lo de abajo
+   public void writePeriodicOutputs() {
     double curTime = Timer.getFPGATimestamp();
     double dt = curTime - prevUpdateTime;
     prevUpdateTime = curTime;
@@ -198,4 +202,6 @@ public class Elevator extends SubsystemBase {
     mPeriodicIO.elevator_target = ElevatorConstants.kHighAlgaeHeight;
     mPeriodicIO.state = ElevatorState.A2;
   }
+
+  
 }

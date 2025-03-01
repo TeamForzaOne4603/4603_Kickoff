@@ -13,12 +13,14 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgueConstants;
 
 public class Desalguificador extends SubsystemBase {
+  //El PID es seguido constantemente, los comandos solo cambian el setpoint
   /** Creates a new Desalguificador. */
   private static Desalguificador m_instance;
   private SparkMax m_algueMotor = new SparkMax(AlgueConstants.k_AlgueMotor, MotorType.kBrushless);
@@ -27,7 +29,7 @@ public class Desalguificador extends SubsystemBase {
   private SparkMaxConfig m_brazoConfig = new SparkMaxConfig();
 
   private RelativeEncoder m_Encoder = m_brazoMotor.getEncoder();
-  private PIDController m_controller = new PIDController(0.15,0,0.0001);
+  private PIDController m_controller = new PIDController(0.035,0,0.0008);
 
   private double position = 0;
 
@@ -59,20 +61,15 @@ public class Desalguificador extends SubsystemBase {
     position = Position;
   }
 
-  public Command pruebaBrazo(){
-    return runEnd(
-      ()-> {
-        m_brazoMotor.set(0.1);
-      },
-      ()-> {
-        m_brazoMotor.set(0);
-      }
-    );
+  public Command pruebaBrazo(double Position){
+    return run(()-> {
+      position = Position;
+    });
   }
   public Command pruebaAlgas(){
     return runEnd(
       ()-> {
-        m_algueMotor.set(0.1);
+        m_algueMotor.set(0.6);
       },
       ()-> {
         m_algueMotor.set(0);
@@ -88,7 +85,7 @@ public class Desalguificador extends SubsystemBase {
   }
 
   public boolean isInPosition (){
-    if (m_Encoder.getPosition() >= position -0.2) {
+    if (m_Encoder.getPosition() >= position -0.02) {
       return true;
     }
     return false;
@@ -99,7 +96,7 @@ public class Desalguificador extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    //m_muñecaMotor.set(m_controller.calculate(m_Encoder.getPosition(), position));
+    m_brazoMotor.set(m_controller.calculate(m_Encoder.getPosition(), position));
     SmartDashboard.putNumber("Posicion", m_Encoder.getPosition());
   }
 }
