@@ -55,9 +55,24 @@ public class Constants {
 
     public static class AlgueConstants{
         public static final int k_AlgueMotor = 6;
-        public static final int k_brazoMotor = 11;
+        public static final int k_WristhMotor = 11;
 
         public static final double k_position = 24.0;
+        public static final int k_currentBrazo = 40;
+
+        public static final double kWristP = 0.01;
+    public static final double kWristI = 0.0;
+    public static final double kWristD = 0.0;
+
+    public static final double kWristKS = 0.0;
+    public static final double kWristKG = 0.0;
+    public static final double kWristKV = 0.100;
+    public static final double kWristKA = 0.0;
+
+    public static final double kWristOffset = 141.0;
+
+    public static final double kWristMaxVelocity = 690.0;
+    public static final double kWristMaxAcceleration = 1380.0;
     }
 
     public static class CoralConstants{

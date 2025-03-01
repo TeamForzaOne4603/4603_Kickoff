@@ -10,10 +10,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.interfaces.LaserCanInterface.RangingMode;
-import au.grapplerobotics.interfaces.LaserCanInterface.TimingBudget;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -36,7 +33,6 @@ public class CoralShooter extends SubsystemBase {
 
   
   private DigitalInput digitalSensor = new DigitalInput(9);
-  
 
   public CoralShooter() {
     m_rightConfig

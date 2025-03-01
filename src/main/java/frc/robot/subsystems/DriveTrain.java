@@ -7,15 +7,23 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPLTVController;
 
-/*import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;*/
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,13 +51,21 @@ public class DriveTrain extends SubsystemBase {
   private Encoder m_leftEncoder = new Encoder(3, 4);
 
   //Odometry and ClosedLoopControl
-  /*private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
+  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
   private PIDController LeftPIDController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
-  private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);*/
+  private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
+  private RobotConfig config;
 
   public DriveTrain() {
+    try{
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
     leftOut = new DutyCycleOut(0);
     rightOut = new DutyCycleOut(0);
 
@@ -95,13 +111,29 @@ public class DriveTrain extends SubsystemBase {
     m_leftEncoder.setReverseDirection(true);  
       
     resetPosition();
-  }
 
-  public void resetPosition(){
-    m_leftLeader.setPosition(0);
-    m_rightLeader.setPosition(0);
-    m_gyro.setYaw(0);
-    m_gyro.reset();
+    resetPosition();
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+
+     try{
+    AutoBuilder.configure(
+      this::getPose, 
+      this::resetPose, 
+      this::getChassisSpeeds, 
+      this::driveChassisSpeeds,
+      new PPLTVController(0.02,4.8),
+      config,
+      () -> {
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      }, 
+      this);
+      }catch(Exception e){
+        DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
+      }
   }
 
   public void controlledDrive(double fwd, double rot){
@@ -112,6 +144,62 @@ public class DriveTrain extends SubsystemBase {
     m_leftLeader.setControl(leftOut);
     m_rightLeader.setControl(rightOut);
   }
+
+  //PathPlanner Shenanigans
+   public Pose2d getPose(){
+    return m_odometry.getPoseMeters();
+    
+  }
+
+  public void resetPose(Pose2d newPose) {
+    m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), newPose);
+  }
+
+  public double getDistance(){
+    // Return the process variable measurement here...
+    double leftDistance = m_leftEncoder.getDistance();
+    double rightDistance = m_rightEncoder.getDistance();
+    return (leftDistance + rightDistance) / 2;
+  }
+
+  public ChassisSpeeds getChassisSpeeds(){
+    var wheelSpeeds = new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    return m_kinematics.toChassisSpeeds(wheelSpeeds);   
+  }
+
+  public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+    
+    
+    DifferentialDriveWheelSpeeds speeds = m_kinematics.toWheelSpeeds(chassisSpeeds);
+    
+    
+    final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
+
+    final double leftOutput =
+      LeftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
+    final double rightOutput =
+      righController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
+      
+    final VoltageOut leftvoltage = new VoltageOut((leftOutput + leftFeedforward));
+    final VoltageOut righVoltage = new VoltageOut((rightOutput + rightFeedforward));
+
+    m_leftLeader.setControl(leftvoltage);
+    m_rightLeader.setControl(righVoltage);
+
+    
+  }
+
+  //Odometry Functions
+
+  public void resetPosition(){
+    m_leftLeader.setPosition(0);
+    m_rightLeader.setPosition(0);
+    m_gyro.setYaw(0);
+    m_gyro.reset();
+  }
+
+
 
   @Override
   public void periodic() {

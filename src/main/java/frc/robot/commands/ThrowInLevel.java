@@ -4,45 +4,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Desalguificador;
+import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.CoralShooter;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class groundAlgue extends Command {
-  /** Creates a new groundAlgue. */
-  private Timer timer = new Timer();
-  private Desalguificador algas = Desalguificador.getInstance();
-  private double position = 0;
-  public groundAlgue(double Position) {
+public class ThrowInLevel extends Command {
+  /** Creates a new ThrowInLevel. */
+  public ThrowInLevel() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(algas);
-    this.position = Position;
+    addRequirements(CoralShooter.getInstance(), Algae.getInstance());
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    timer.stop();
-    timer.reset();
-    timer.start();
-    algas.setPosition(position);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-    if (algas.isInPosition()) {
-      algas.setAlgue(0.5);
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    algas.setAlgue(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

@@ -8,12 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.CoralIntake;
-import frc.robot.commands.groundAlgue;
-import frc.robot.subsystems.CoralShooter;
-import frc.robot.subsystems.Desalguificador;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Elevator;
 
 public class RobotContainer {
   
@@ -21,8 +17,7 @@ public class RobotContainer {
   private final CommandXboxController joy_op = new CommandXboxController(2);
   private final CommandXboxController joy_Elevador = new CommandXboxController(3);
   private final DriveTrain tankDrive = new DriveTrain();
-  private final CoralIntake comandoCoral = new CoralIntake();
-  private final Desalguificador algas = Desalguificador.getInstance();
+  //private final CoralIntake comandoCoral = new CoralIntake();
   
 
   public RobotContainer() {
@@ -31,17 +26,15 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    joy_Elevador.a().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL2(), Elevator.getInstance()));
+   /*  joy_Elevador.a().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL2(), Elevator.getInstance()));
     joy_Elevador.y().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL3(), Elevator.getInstance()));
     joy_Elevador.b().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorStow(), Elevator.getInstance()));
     joy_Elevador.x().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL4(), Elevator.getInstance()));
     joy_Elevador.rightBumper().whileTrue(new RunCommand(() -> Elevator.getInstance().goToAlgaeHigh(), Elevator.getInstance()));
-    joy_op.b().whileTrue(Desalguificador.getInstance().pruebaAlgas());
     joy_op.x().onTrue(comandoCoral);
-    joy_op.a().whileTrue(CoralShooter.getInstance().pruebaTirar());
-    joy_drive.b().whileTrue(algas.pruebaAlgas());
-    joy_drive.y().whileTrue(algas.pruebaBrazo(90)).toggleOnFalse(algas.pruebaBrazo(0));
-    joy_op.rightBumper().whileTrue(new groundAlgue(90));
+    joy_op.a().whileTrue(CoralShooter.getInstance().pruebaTirar());*/
+    joy_drive.a().whileTrue(Climber.getInstance().bajar());
+    joy_drive.b().whileTrue(Climber.getInstance().subir());
    /*  joy_Elevador.a().whileTrue(Elevator.getInstance().goUp());
     joy_Elevador.b().whileTrue(Elevator.getInstance().goDown());*/
   }
