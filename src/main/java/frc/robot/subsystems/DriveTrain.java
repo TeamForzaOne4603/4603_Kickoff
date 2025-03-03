@@ -35,7 +35,7 @@ public class DriveTrain extends SubsystemBase {
   private TalonFX m_leftFollower;
   private TalonFX m_rightLeader;
   private TalonFX m_rightFollower;
-  private Pigeon2 m_gyro = new Pigeon2(13);
+  //private Pigeon2 m_gyro = new Pigeon2(13);
 
   //DutyCycle
   private final DutyCycleOut leftOut;
@@ -55,7 +55,7 @@ public class DriveTrain extends SubsystemBase {
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
   private PIDController LeftPIDController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
   private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
-  private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
+ // private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
 
   public DriveTrain() {
@@ -74,7 +74,7 @@ public class DriveTrain extends SubsystemBase {
     m_leftFollower = new TalonFX(ChassisConstants.k_leftFollower);
     m_rightLeader = new TalonFX(ChassisConstants.k_rightLeader);
     m_rightFollower = new TalonFX(ChassisConstants.k_rightFollower);
-    m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
+   // m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
 
     //Motor configuration
     m_currentConfig.StatorCurrentLimitEnable = true;
@@ -111,7 +111,7 @@ public class DriveTrain extends SubsystemBase {
     m_leftEncoder.setReverseDirection(true);  
       
     resetPosition();
-
+/* 
     resetPosition();
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
@@ -133,7 +133,7 @@ public class DriveTrain extends SubsystemBase {
       this);
       }catch(Exception e){
         DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
-      }
+      }*/
   }
 
   public void controlledDrive(double fwd, double rot){
@@ -146,15 +146,16 @@ public class DriveTrain extends SubsystemBase {
   }
 
   //PathPlanner Shenanigans
+  /* 
    public Pose2d getPose(){
-    return m_odometry.getPoseMeters();
+   return m_odometry.getPoseMeters();
     
   }
 
   public void resetPose(Pose2d newPose) {
     m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), newPose);
   }
-
+*/
   public double getDistance(){
     // Return the process variable measurement here...
     double leftDistance = m_leftEncoder.getDistance();
@@ -195,8 +196,8 @@ public class DriveTrain extends SubsystemBase {
   public void resetPosition(){
     m_leftLeader.setPosition(0);
     m_rightLeader.setPosition(0);
-    m_gyro.setYaw(0);
-    m_gyro.reset();
+   // m_gyro.setYaw(0);
+   // m_gyro.reset();
   }
 
 
@@ -204,9 +205,9 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Angle", m_gyro.getYaw().getValueAsDouble());
+   /*  SmartDashboard.putNumber("Angle", m_gyro.getYaw().getValueAsDouble());
     m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
     SmartDashboard.putNumber("X", m_odometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("Y", m_odometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("Y", m_odometry.getPoseMeters().getY()); */
   }
 }

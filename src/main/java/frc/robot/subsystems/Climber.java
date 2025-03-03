@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import org.ejml.equation.IntegerSequence.For;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -31,7 +29,7 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   private SparkMax m_leftClimber = new SparkMax(7, MotorType.kBrushless);
-  private SparkMax m_rightClimber = new SparkMax(8, MotorType.kBrushless);
+ // private SparkMax m_rightClimber = new SparkMax(8, MotorType.kBrushless);
   private RelativeEncoder m_Encoder = m_leftClimber.getEncoder();
 
   public Climber() {
@@ -45,19 +43,19 @@ public class Climber extends SubsystemBase {
     RighConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(80)
-        .follow(7, true);
+        .inverted(false);
 
     m_leftClimber.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    m_rightClimber.configure(RighConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+   // m_rightClimber.configure(RighConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public Command subir(){
-    return runEnd(()-> {m_leftClimber.set(1);}, ()-> {m_leftClimber.set(0);});
+    return runEnd(()-> {m_leftClimber.set(0.85);}, ()-> {m_leftClimber.set(0);});
   }
   
 
   public Command bajar(){
-    return runEnd(()-> {m_leftClimber.set(-1);}, ()-> {m_leftClimber.set(0);});
+    return runEnd(()-> {m_leftClimber.set(-0.85);}, ()-> {m_leftClimber.set(0);});
   }
 
   @Override

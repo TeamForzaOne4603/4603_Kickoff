@@ -28,7 +28,7 @@ public class CoralShooter extends SubsystemBase {
   private SparkMaxConfig m_rightConfig = new SparkMaxConfig();
   private SparkMax m_rightMotor = new SparkMax(CoralConstants.k_rightMotor, MotorType.kBrushless);
   private SparkMaxConfig m_leftConfig = new SparkMaxConfig();
-  private LaserCan m_laserSensor = new LaserCan(21);
+ // private LaserCan m_laserSensor = new LaserCan(21);
   
 
   
@@ -39,7 +39,7 @@ public class CoralShooter extends SubsystemBase {
       .smartCurrentLimit(40)
       .closedLoopRampRate(0.3)
       .idleMode(IdleMode.kBrake)
-      .inverted(false);
+      .inverted(true);
 
     m_leftConfig
       .smartCurrentLimit(40)
@@ -63,13 +63,13 @@ public class CoralShooter extends SubsystemBase {
   public Command pruebaCoral(){
     return runEnd(
       ()->{
-        if (digitalSensor.get() || m_laserSensor.getMeasurement().distance_mm < 60) {
+       /*  if (digitalSensor.get() || m_laserSensor.getMeasurement().distance_mm < 60) {
           
           m_rightMotor.set(0.2);
         } else {
           m_rightMotor.set(0);
         }
-
+*/
       }
       ,()->{
         m_rightMotor.set(0);
@@ -79,7 +79,17 @@ public class CoralShooter extends SubsystemBase {
   public Command pruebaTirar(){
     return runEnd(
       ()->{
-        m_rightMotor.set(0.4);
+        m_rightMotor.set(0.6);
+      }
+      ,()->{
+        m_rightMotor.set(0);
+      });
+  }
+
+  public Command pruebaAtras(){
+    return runEnd(
+      ()->{
+        m_rightMotor.set(-0.6);
       }
       ,()->{
         m_rightMotor.set(0);
@@ -97,10 +107,10 @@ public class CoralShooter extends SubsystemBase {
 
   public double getLaser(){
     //regresa la distancia, la mamadota de codigo es por si falla en medir
-    LaserCan.Measurement measurement = m_laserSensor.getMeasurement();
+    /*LaserCan.Measurement measurement = m_laserSensor.getMeasurement();
     if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
       return measurement.distance_mm;
-    } 
+    }*/ 
     return 250;
   }
 
@@ -114,6 +124,6 @@ public class CoralShooter extends SubsystemBase {
     // This method will be called once per scheduler run
     
     SmartDashboard.putBoolean("sensor", digitalSensor.get());
-    SmartDashboard.putNumber("LaserCAN", m_laserSensor.getMeasurement().distance_mm);
+    //SmartDashboard.putNumber("LaserCAN", m_laserSensor.getMeasurement().distance_mm);
   }
 }

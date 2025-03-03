@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import javax.print.attribute.SetOfIntegerSyntax;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -15,6 +18,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgueConstants;
@@ -34,7 +38,7 @@ public class Algae extends SubsystemBase {
   private RelativeEncoder encoder;
   private final ProfiledPIDController mWristPIDController;
   private final ArmFeedforward mWristFeedForward;
-  private final double angle = 0;
+  private double setPoint = 0;
 
   private SparkMax mIntakeMotor;
 
@@ -86,11 +90,13 @@ public class Algae extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double pidCalc = mWristPIDController.calculate(getWristAngle(), angle);
+    double pidCalc = mWristPIDController.calculate(getWristAngle(), setPoint);
     double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristReferenceToHorizontal()),
         Math.toRadians(mWristPIDController.getSetpoint().velocity));
 
     mWristMotor.setVoltage(pidCalc + ffCalc); 
+
+    SmartDashboard.putNumber("Brazo", encoder.getPosition());
   }
 
   public Command shoot (){
@@ -119,15 +125,31 @@ public class Algae extends SubsystemBase {
     });
   }
 
+  public Command goUp(){
+    return runEnd(()-> {mWristMotor.set(0.4);}, ()-> {mWristMotor.set(0);});
+  }
+  public Command goDown(){
+    return runEnd(()-> {mWristMotor.set(-0.4);}, ()-> {mWristMotor.set(0);});
+  }
+
+  public Command reset(){
+    return runOnce(()-> {encoder.setPosition(0);});
+  }
+
+  public Command goToPosition(double Position){
+    return runOnce(()->{setPoint = Position;});
+  }
+
+
   public double getWristAngle() {
-    return Units.rotationsToDegrees(encoder.getPosition());
+    return encoder.getPosition() * 1.9;
   }
 
   public double getWristReferenceToHorizontal() {
-    return getWristAngle() - AlgueConstants.kWristOffset;
+    return getWristAngle() + AlgueConstants.kWristOffset;
   }
   public boolean isInPosition(){
-    if(getWristAngle() <= angle-0.02 || getWristAngle() >= angle+0.02){
+    if(getWristAngle() <= setPoint-0.02 || getWristAngle() >= setPoint+0.02){
       return true;
     }
     return false;

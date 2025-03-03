@@ -29,10 +29,10 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final  int k_rightMotor = 8;
-        public static final  int k_leftMotor = 7;
+        public static final  int k_rightMotor = 25;
+        public static final  int k_leftMotor = 24;
 
-        public static final double k_elevatorKP = 0.05;
+        public static final double k_elevatorKP = 0.1;
         public static final double k_elevatorKI = 0;
         public static final double k_elevatorKD = 0;
         public static final double k_elevatorKIZone = 15;
@@ -40,7 +40,7 @@ public class Constants {
         public static final double k_maxVelocity = 65;
         public static final double k_maxAcceleration = 200;
 
-        public static final int k_supplyLimit = 40;
+        public static final int k_supplyLimit = 60;
 
         public static final double kStowHeight = 0.0;
         public static final double kL2Height = 9.0;
@@ -54,22 +54,22 @@ public class Constants {
     }
 
     public static class AlgueConstants{
-        public static final int k_AlgueMotor = 6;
-        public static final int k_WristhMotor = 11;
+        public static final int k_AlgueMotor =23;
+        public static final int k_WristhMotor = 20;
 
         public static final double k_position = 24.0;
         public static final int k_currentBrazo = 40;
 
-        public static final double kWristP = 0.01;
+        public static final double kWristP = 0.42;
     public static final double kWristI = 0.0;
     public static final double kWristD = 0.0;
 
-    public static final double kWristKS = 0.0;
-    public static final double kWristKG = 0.0;
-    public static final double kWristKV = 0.100;
+    public static final double kWristKS = 0.03;
+    public static final double kWristKG = 0.4;
+    public static final double kWristKV = 0.150;
     public static final double kWristKA = 0.0;
 
-    public static final double kWristOffset = 141.0;
+    public static final double kWristOffset = 90;
 
     public static final double kWristMaxVelocity = 690.0;
     public static final double kWristMaxAcceleration = 1380.0;
@@ -77,7 +77,7 @@ public class Constants {
 
     public static class CoralConstants{
         
-        public static final  int k_rightMotor = 10;
-        public static final  int k_leftMotor = 12;
+        public static final  int k_rightMotor = 21;
+        public static final  int k_leftMotor = 22;
     }
 }

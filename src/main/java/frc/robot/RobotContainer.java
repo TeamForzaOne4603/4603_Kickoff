@@ -8,8 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CoralShooter;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Elevator;
 
 public class RobotContainer {
   
@@ -31,10 +34,20 @@ public class RobotContainer {
     joy_Elevador.b().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorStow(), Elevator.getInstance()));
     joy_Elevador.x().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL4(), Elevator.getInstance()));
     joy_Elevador.rightBumper().whileTrue(new RunCommand(() -> Elevator.getInstance().goToAlgaeHigh(), Elevator.getInstance()));
-    joy_op.x().onTrue(comandoCoral);
-    joy_op.a().whileTrue(CoralShooter.getInstance().pruebaTirar());*/
-    joy_drive.a().whileTrue(Climber.getInstance().bajar());
-    joy_drive.b().whileTrue(Climber.getInstance().subir());
+    joy_op.x().onTrue(comandoCoral);*/
+    /*joy_op.a().whileTrue(Algae.getInstance().goToPosition(0));
+    joy_op.b().whileTrue(Algae.getInstance().goToPosition(10));
+    joy_op.y().whileTrue(Algae.getInstance().goToPosition(90));
+    joy_op.x().whileTrue(Algae.getInstance().goToPosition(160));*/
+
+    joy_op.rightBumper().whileTrue(Elevator.getInstance().goUp());
+    joy_op.leftBumper().whileTrue(Elevator.getInstance().goDown());
+
+    /*joy_op.b().whileTrue(Algae.getInstance().goToPosition(0));
+    joy_op.x().whileTrue(Algae.getInstance().goDown());
+    joy_op.y().whileFalse(Algae.getInstance().reset());*/
+    //joy_drive.a().whileTrue(Climber.getInstance().bajar());
+    //joy_drive.b().whileTrue(Climber.getInstance().subir());
    /*  joy_Elevador.a().whileTrue(Elevator.getInstance().goUp());
     joy_Elevador.b().whileTrue(Elevator.getInstance().goDown());*/
   }
