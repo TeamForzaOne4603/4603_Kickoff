@@ -29,28 +29,28 @@ public class Constants {
     }
 
     public static class ElevatorConstants{
-        public static final  int k_rightMotor = 25;
-        public static final  int k_leftMotor = 24;
+        public static final  int k_rightMotor = 24;
+        public static final  int k_leftMotor = 25;
 
-        public static final double k_elevatorKP = 0.1;
+        public static final double k_elevatorKP = 0.35;
         public static final double k_elevatorKI = 0;
         public static final double k_elevatorKD = 0;
-        public static final double k_elevatorKIZone = 15;
-        public static final double kG = 0.5;
-        public static final double k_maxVelocity = 65;
-        public static final double k_maxAcceleration = 200;
+        public static final double k_elevatorKIZone = 17;
+        public static final double kG = 8.5;
+        public static final double k_maxVelocity = 90;
+        public static final double k_maxAcceleration = 180;
 
-        public static final int k_supplyLimit = 60;
+        public static final int k_supplyLimit = 40;
 
-        public static final double kStowHeight = 0.0;
-        public static final double kL2Height = 9.0;
-        public static final double kL3Height = 25.14;
-        public static final double kL4Height = 52.0;
-        public static final double kMaxHeight = 56.2;
-        public static final double kGroundAlgaeHeight = 0.0;
+        public static final double kStowHeight = 15;
+        public static final double kL2Height = 50;
+        public static final double kL3Height = 80;
+        public static final double kL4Height = 90;
+        public static final double kMaxHeight = 26;
+        public static final double kGroundAlgaeHeight = 0;
         public static final double kScoreAlgaeHeight = 0.0;
-        public static final double kLowAlgaeHeight = 24.8;
-        public static final double kHighAlgaeHeight = 42.5;
+        public static final double kLowAlgaeHeight = 15;
+        public static final double kHighAlgaeHeight = 12;
     }
 
     public static class AlgueConstants{
@@ -77,7 +77,33 @@ public class Constants {
 
     public static class CoralConstants{
         
-        public static final  int k_rightMotor = 21;
+        public static final  int k_rightMotor = 26;
         public static final  int k_leftMotor = 22;
+        public static final int k_laserCAN = 21;
+    }
+
+    public static class NewElevatorConstants{
+        public static final  int k_rightMotor = 24;
+        public static final  int k_leftMotor = 25;
+
+        public static final double k_P = 0.35;
+        public static final double k_I = 0;
+        public static final double k_D = 0;
+        public static final double k_IZone = 17;
+        public static final double k_G = 1.2;
+        public static final double k_maxVelocity = 90;
+        public static final double k_maxAcceleration = 180;
+        public static final double k_V = 0.1392;
+        public static final double k_S = 1.0281;
+
+        public static final double kStowHeight = 5;
+        public static final double kL2Height = 25;
+        public static final double kL3Height = 28;
+        public static final double kL4Height = 60;
+        public static final double kMaxHeight = 70;
+
+        public static final double k_encoderCPR = 2048;
+        public static final double k_wheelDiameterMeters = Units.inchesToMeters(6);
+        public static final double k_encoderDistancePerPulse = -(Math.PI * k_wheelDiameterMeters) / k_encoderCPR;
     }
 }

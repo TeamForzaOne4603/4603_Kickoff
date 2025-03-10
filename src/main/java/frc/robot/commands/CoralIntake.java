@@ -19,8 +19,6 @@ public class CoralIntake extends Command {
     addRequirements(coral);
   }
 
-
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -30,32 +28,29 @@ public class CoralIntake extends Command {
     timer.stop();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     if (check == false && !coral.getSensor()) {
+    //Starts intake when the laserCAN detects coral
+    if(check == false && coral.getLaser() < 90) {
+      
       coral.setSpeed(0.2);
+    }
+
+    //Starts timer when the colorsensor detects a coral
+    if (check == false && coral.getColor() ) {
       check = true;
       timer.start();
-      //inicia el timer en cuanto el sensor amarillo detecte coral
     } 
-    if(check == false && coral.getLaser() < 90) {
-      coral.setSpeed(0.2);
-      //solo inicia si deteca el coral
-    }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     coral.setSpeed(0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() > 0.16;
-    //return !coral.getSensor() && coral.getLaser() > 50;
-
+    //Ends 0.065 seconds after the colorsensor detects the coral
+    return timer.get() > 0.065;
   }
 }

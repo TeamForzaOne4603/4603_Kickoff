@@ -7,8 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import javax.print.attribute.SetOfIntegerSyntax;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -17,7 +15,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +36,7 @@ public class Algae extends SubsystemBase {
   private final ProfiledPIDController mWristPIDController;
   private final ArmFeedforward mWristFeedForward;
   private double setPoint = 0;
+  private int state = 0;
 
   private SparkMax mIntakeMotor;
 
@@ -46,7 +44,7 @@ public class Algae extends SubsystemBase {
     mWristMotor = new SparkMax(AlgueConstants.k_WristhMotor, MotorType.kBrushless);
     SparkMaxConfig wristConfig = new SparkMaxConfig();
     wristConfig
-        .idleMode(IdleMode.kCoast)
+        .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(AlgueConstants.k_currentBrazo)
         .inverted(true);
 
@@ -84,6 +82,7 @@ public class Algae extends SubsystemBase {
             PersistMode.kPersistParameters);  
             
     encoder = mWristMotor.getEncoder();
+    state = 0;
   }
 
   
@@ -97,33 +96,61 @@ public class Algae extends SubsystemBase {
     mWristMotor.setVoltage(pidCalc + ffCalc); 
 
     SmartDashboard.putNumber("Brazo", encoder.getPosition());
+
+    switch (state) {
+      case 0:
+        
+        break;
+      case 1:
+        
+        break;
+      case 2:
+      mIntakeMotor.set(-0.2);
+        break;
+      case 3:
+      mIntakeMotor.set(0.2);
+        break;
+
+      case 4:
+        
+          break;
+    
+      default:
+        break;
+    }
   }
 
-  public Command shoot (){
+  public Command take (double speed){
     return runEnd(()->{
-      if (isInPosition()) {
-        mIntakeMotor.set(0.6);
-      } else {
-        mIntakeMotor.set(0);
-      }
+          mIntakeMotor.set(speed);
     }, 
     ()-> {
+      if (speed > 0) {
+        state = 3;
+      } else {
+        state = 2;
+      }
       mIntakeMotor.set(0);
     });
   }
 
-  public Command take (){
-    return runEnd(()->{
-      if (isInPosition()) {
-        mIntakeMotor.set(-0.6);
-      } else {
-        mIntakeMotor.set(0);
+
+  public Command shoot(){
+    return runEnd(()-> {
+      if (state == 2 || state == 1) {
+        state = 1;
+        mIntakeMotor.set(0.3);
+      } else if (state == 3 || state == 4) {
+        state = 4;
+        mIntakeMotor.set(-0.3);
       }
     }, 
-    ()-> {
+    ()-> {state = 0;
       mIntakeMotor.set(0);
     });
   }
+
+  
 
   public Command goUp(){
     return runEnd(()-> {mWristMotor.set(0.4);}, ()-> {mWristMotor.set(0);});
@@ -140,6 +167,10 @@ public class Algae extends SubsystemBase {
     return runOnce(()->{setPoint = Position;});
   }
 
+  public Command resetPosition(double Position){
+    return runOnce(()->{encoder.setPosition(0);});
+  }
+
 
   public double getWristAngle() {
     return encoder.getPosition() * 1.9;
@@ -149,7 +180,8 @@ public class Algae extends SubsystemBase {
     return getWristAngle() + AlgueConstants.kWristOffset;
   }
   public boolean isInPosition(){
-    if(getWristAngle() <= setPoint-0.02 || getWristAngle() >= setPoint+0.02){
+    if(getWristAngle() <= setPoint-0.1 || getWristAngle() >= setPoint+0.1){
+      mIntakeMotor.getForwardLimitSwitch();
       return true;
     }
     return false;

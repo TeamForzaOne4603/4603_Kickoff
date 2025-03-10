@@ -35,7 +35,7 @@ public class DriveTrain extends SubsystemBase {
   private TalonFX m_leftFollower;
   private TalonFX m_rightLeader;
   private TalonFX m_rightFollower;
-  //private Pigeon2 m_gyro = new Pigeon2(13);
+  private Pigeon2 m_gyro = new Pigeon2(13);
 
   //DutyCycle
   private final DutyCycleOut leftOut;
@@ -47,24 +47,24 @@ public class DriveTrain extends SubsystemBase {
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
 
   //Encoders
-  private Encoder m_rightEncoder = new Encoder(1, 2);
-  private Encoder m_leftEncoder = new Encoder(3, 4);
+ // private Encoder m_rightEncoder = new Encoder(1, 2);
+  //private Encoder m_leftEncoder = new Encoder(3, 4);
 
   //Odometry and ClosedLoopControl
-  private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
+  /*private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
   private PIDController LeftPIDController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
   private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
- // private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
-  private RobotConfig config;
+  private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
+  private RobotConfig config;*/
 
   public DriveTrain() {
-    try{
+  /*   try{
       config = RobotConfig.fromGUISettings();
     } catch (Exception e) {
       // Handle exception as needed
       e.printStackTrace();
-    }
+    }*/
 
     leftOut = new DutyCycleOut(0);
     rightOut = new DutyCycleOut(0);
@@ -74,7 +74,7 @@ public class DriveTrain extends SubsystemBase {
     m_leftFollower = new TalonFX(ChassisConstants.k_leftFollower);
     m_rightLeader = new TalonFX(ChassisConstants.k_rightLeader);
     m_rightFollower = new TalonFX(ChassisConstants.k_rightFollower);
-   // m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
+    m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
 
     //Motor configuration
     m_currentConfig.StatorCurrentLimitEnable = true;
@@ -104,14 +104,12 @@ public class DriveTrain extends SubsystemBase {
     m_rightLeader.setSafetyEnabled(true);
     
     //Encoder setup
-    m_rightEncoder.setDistancePerPulse(ChassisConstants.k_encoderDistancePerPulse);
+  /*  m_rightEncoder.setDistancePerPulse(ChassisConstants.k_encoderDistancePerPulse);
     m_leftEncoder.setDistancePerPulse(ChassisConstants.k_encoderDistancePerPulse);
 
     m_rightEncoder.setReverseDirection(false);  
     m_leftEncoder.setReverseDirection(true);  
-      
-    resetPosition();
-/* 
+
     resetPosition();
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
@@ -137,8 +135,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void controlledDrive(double fwd, double rot){
-    double x = Math.abs(fwd) > 0.09 ? -fwd*0.6 : 0;
-    double y = Math.abs(rot) > 0.09 ? rot*0.6 : 0;
+    double x = Math.abs(fwd) > 0.09 ? fwd*0.35 : 0;
+    double y = Math.abs(rot) > 0.09 ? rot*0.35 : 0;
     leftOut.Output = x + y;
     rightOut.Output = x - y;
     m_leftLeader.setControl(leftOut);
@@ -146,8 +144,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   //PathPlanner Shenanigans
-  /* 
-   public Pose2d getPose(){
+ /*  public Pose2d getPose(){
    return m_odometry.getPoseMeters();
     
   }
@@ -155,7 +152,7 @@ public class DriveTrain extends SubsystemBase {
   public void resetPose(Pose2d newPose) {
     m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), newPose);
   }
-*/
+
   public double getDistance(){
     // Return the process variable measurement here...
     double leftDistance = m_leftEncoder.getDistance();
@@ -187,17 +184,15 @@ public class DriveTrain extends SubsystemBase {
 
     m_leftLeader.setControl(leftvoltage);
     m_rightLeader.setControl(righVoltage);
-
-    
-  }
+  }*/
 
   //Odometry Functions
 
   public void resetPosition(){
     m_leftLeader.setPosition(0);
     m_rightLeader.setPosition(0);
-   // m_gyro.setYaw(0);
-   // m_gyro.reset();
+    m_gyro.setYaw(0);
+    m_gyro.reset();
   }
 
 
@@ -205,8 +200,8 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-   /*  SmartDashboard.putNumber("Angle", m_gyro.getYaw().getValueAsDouble());
-    m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    /*m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+    SmartDashboard.putNumber("Angle", m_gyro.getYaw().getValueAsDouble());
     SmartDashboard.putNumber("X", m_odometry.getPoseMeters().getX());
     SmartDashboard.putNumber("Y", m_odometry.getPoseMeters().getY()); */
   }
