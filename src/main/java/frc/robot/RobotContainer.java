@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ClimbCmd;
@@ -25,6 +26,10 @@ public class RobotContainer {
   private final DriveTrain tankDrive = new DriveTrain();
   private final CoralIntake comandoCoral = new CoralIntake();
   private final ClimbCmd comandoDrive = new ClimbCmd(joy_drive);
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private Command m_simpleAuto = new Command() {};
+  private Command m_complexAuto = new Command() {};
+
 
   
 
@@ -32,6 +37,9 @@ public class RobotContainer {
     tankDrive.setDefaultCommand(comandoDrive);
     //tankDrive.setDefaultCommand(new RunCommand(() -> tankDrive.controlledDrive(-joy_drive.getLeftY(),-joy_drive.getRightX()), tankDrive));
     configureBindings();
+
+    m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
+    m_chooser.addOption("Complex Auto", m_complexAuto);
   }
 
   private void configureBindings() {
