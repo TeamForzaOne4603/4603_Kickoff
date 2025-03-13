@@ -35,6 +35,8 @@ public class ClimbCmd extends Command {
   @Override
   public void execute() {
     driveTrain.controlledDrive(-xbox.getLeftY(),-xbox.getRightX());
+
+    
     if (xbox.a().getAsBoolean()) {
       climber.brazo(0.3);
       check_A = true;
@@ -55,7 +57,7 @@ public class ClimbCmd extends Command {
       climber.Spool(-0.3);
       check_X = true;
     } else if (check_X == true) {
-      climber.brazo(0);
+      climber.Spool(0);
       check_X = false;
     }
 
@@ -63,7 +65,7 @@ public class ClimbCmd extends Command {
       climber.Spool(0.3);
       check_Y = true;
     } else if (check_Y == true) {
-      climber.brazo(0);
+      climber.Spool(0);
       check_Y = false;
     }
   }

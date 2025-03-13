@@ -38,8 +38,6 @@ public class NewElevator extends SubsystemBase {
   
     private boolean isInPositionControl = false;
     private double setPoint = 0;
-    private double voltage = 0;
-    private boolean isInVoltageControl = false;
   
     public NewElevator() {
         m_controller.reset(0);
@@ -63,12 +61,8 @@ public class NewElevator extends SubsystemBase {
       // This method will be called once per scheduler run
       if (isInPositionControl) {
         m_leftMotor.setVoltage(m_controller.calculate(m_encoder.getDistance(), setPoint) + m_feedforward.calculate(m_controller.getSetpoint().velocity));
-      } else if (isInVoltageControl) {
-        m_leftMotor.setVoltage(voltage);
       }
-      SmartDashboard.putNumber("Elevator", m_encoder.getDistance());
-      SmartDashboard.putNumber("Elev.Volt", voltage);
-      SmartDashboard.putBoolean("EstaEnPosicion", isInPosition());
+      SmartDashboard.putBoolean("IsInPosition", isInPosition());
     }
     
   
@@ -80,24 +74,7 @@ public class NewElevator extends SubsystemBase {
    }, ()-> {
     m_leftMotor.set(0);
    });}
-
-   public Command VoltageMove(){
-    return runEnd(()->{
-    isInVoltageControl = true;
-   }, ()-> {
-    isInVoltageControl = false;
-   });}
-
-   public Command upVoltage(){
-    return runOnce(()-> {voltage += 0.1;});
-   }
-
-   public Command downVoltage(){
-    return runOnce(()-> {if(voltage > 0){voltage -= 0.1;}});
-   }
    
-   
-  
    //Position Commands
    public Command goToPosition (double position){
     return runOnce(()->{

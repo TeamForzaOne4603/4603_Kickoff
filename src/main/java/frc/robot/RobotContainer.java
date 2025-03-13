@@ -58,11 +58,6 @@ public class RobotContainer {
     joy_Alga.povUp().whileTrue(Algae.getInstance().reset());
 
     joy_Alga.rightBumper().whileTrue(NewElevator.getInstance().goToPosition(13).alongWith(Algae.getInstance().goDown()));
-    
-
-
-    joy_Elevator.povUp().onTrue(NewElevator.getInstance().upVoltage());
-    joy_Elevator.povDown().onTrue(NewElevator.getInstance().downVoltage());
 
     joy_Elevator.rightBumper().and(joy_Elevator.x()).whileTrue(NewElevator.getInstance().manualMove(0.3));
     joy_Elevator.rightBumper().and(joy_Elevator.a()).whileTrue(NewElevator.getInstance().manualMove(-0.25));
@@ -78,10 +73,6 @@ public class RobotContainer {
     joy_drive.b().whileTrue(Climber.getInstance().brazo(-0.2));//subir brazo
     joy_drive.x().whileTrue(Climber.getInstance().Spool(-0.2));//subir spool
     joy_drive.y().whileTrue(Climber.getInstance().Spool(0.3)); //bajar spool
-
-
-
-
   }
 
   public Command getAutonomousCommand() {

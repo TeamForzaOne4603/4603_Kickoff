@@ -18,6 +18,7 @@ import com.pathplanner.lib.controllers.PPLTVController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -55,6 +56,8 @@ public class DriveTrain extends SubsystemBase {
   private TalonFXConfiguration m_rightConfiguration = new TalonFXConfiguration();
   private TalonFXConfiguration m_leftConfiguration = new TalonFXConfiguration();
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
+  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(0.3, -0.5, 0);
+
 
   //Encoders
 private Encoder m_rightEncoder = new Encoder(6, 7);
@@ -146,18 +149,18 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
         DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
       }
   }
-
+  //Manual Drive
   public void controlledDrive(double fwd, double rot){
-    double x = Math.abs(fwd) > 0.09 ? -fwd*0.35 : 0;
-    double y = Math.abs(rot) > 0.09 ? rot*0.45 : 0;
-    double limitante = NewElevator.getInstance().getPosition() > 20 ? 0.5 : 1;
-    leftOut.Output = (x + y) * limitante;
-    rightOut.Output = (x - y) * limitante;
+    double x = Math.abs(fwd) > 0.09 ? accelerationRamp.calculate(-fwd*0.35) : accelerationRamp.calculate(0); //Get forward axis, 0.09 deadband
+    double y = Math.abs(rot) > 0.09 ? rot*0.45 : 0; //Get rotational axis, 0.09 deadband
+    double limit = NewElevator.getInstance().getPosition() > 20 ? 0.5 : 1; // If elevator is up, the chassis gets slower
+    leftOut.Output = (x + y) * limit;
+    rightOut.Output = (x - y) * limit;
     m_leftLeader.setControl(leftOut);
     m_rightLeader.setControl(rightOut);
   }
 
-  //PathPlanner Shenanigans
+  //Odometry functions
    public Pose2d getPose(){
    return m_odometry.getPoseMeters();
     
@@ -167,8 +170,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), newPose);
   }
 
-  public double getDistance(){
-    // Return the process variable measurement here...
+  public double getAverageDistance(){
     double leftDistance = m_leftEncoder.getDistance();
     double rightDistance = m_rightEncoder.getDistance();
     return (leftDistance + rightDistance) / 2;
@@ -228,7 +230,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_rightLeader.setPosition(0);
     m_gyro.setYaw(0);
     m_gyro.reset();
-    m_leftLeader.setVoltage(getDistance());
+    m_leftLeader.setVoltage(getAverageDistance());
   }
 
 
