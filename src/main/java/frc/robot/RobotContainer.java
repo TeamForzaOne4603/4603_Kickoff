@@ -7,7 +7,9 @@ package frc.robot;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.CoralIntake;
@@ -23,12 +25,14 @@ public class RobotContainer {
   private final CommandXboxController joy_op = new CommandXboxController(2);
   private final CommandXboxController joy_Alga = new CommandXboxController(3);
   private final CommandXboxController joy_Elevator = new CommandXboxController(4);
-  private final DriveTrain tankDrive = new DriveTrain();
+  private final DriveTrain tankDrive = DriveTrain.getInstance();
   private final CoralIntake comandoCoral = new CoralIntake();
   private final ClimbCmd comandoDrive = new ClimbCmd(joy_drive);
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private Command m_simpleAuto = new Command() {};
-  private Command m_complexAuto = new Command() {};
+  private Command AutoCentro = new Command() {};
+  private Command AutoDerecha = new Command() {};
+  private Command AutoIzquierda = new Command() {};
+
 
 
   
@@ -38,15 +42,13 @@ public class RobotContainer {
     //tankDrive.setDefaultCommand(new RunCommand(() -> tankDrive.controlledDrive(-joy_drive.getLeftY(),-joy_drive.getRightX()), tankDrive));
     configureBindings();
 
-    m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
-    m_chooser.addOption("Complex Auto", m_complexAuto);
+    m_chooser.setDefaultOption("Centro", AutoCentro);
+    m_chooser.addOption("Derecha", AutoDerecha);
+    m_chooser.addOption("Izquierda", AutoIzquierda);
+    SmartDashboard.putData(m_chooser);
   }
 
   private void configureBindings() {
-    //joy_op.a().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL2(), Elevator.getInstance()));
-    //joy_op.y().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL3(), Elevator.getInstance()));
-    //joy_op.b().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorL4(), Elevator.getInstance()));
-    //joy_op.x().whileTrue(new RunCommand(() -> Elevator.getInstance().goToElevatorStow(), Elevator.getInstance()));
 
      joy_Elevator.leftStick().onTrue(comandoCoral);
     joy_drive.rightTrigger().whileTrue(CoralShooter.getInstance().shootPosition());
@@ -84,5 +86,5 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("Auto 1");  }
+    return m_chooser.getSelected();  }
 }

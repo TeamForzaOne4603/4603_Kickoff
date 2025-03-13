@@ -46,7 +46,7 @@ public class DriveTrain extends SubsystemBase {
   private TalonFX m_leftFollower;
   private TalonFX m_rightLeader;
   private TalonFX m_rightFollower;
-  private Pigeon2 m_gyro = new Pigeon2(13);
+  private Pigeon2 m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
 
   //DutyCycle
   private final DutyCycleOut leftOut;
