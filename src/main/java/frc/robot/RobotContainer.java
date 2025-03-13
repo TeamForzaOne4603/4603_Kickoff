@@ -4,12 +4,12 @@
 
 package frc.robot;
 
+
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ClimbCmd;
 import frc.robot.commands.CoralIntake;
@@ -32,6 +32,8 @@ public class RobotContainer {
   private Command AutoCentro = new Command() {};
   private Command AutoDerecha = new Command() {};
   private Command AutoIzquierda = new Command() {};
+  private Command PruebaPathPlanner = new   PathPlannerAuto("null");
+
 
 
 
@@ -45,6 +47,7 @@ public class RobotContainer {
     m_chooser.setDefaultOption("Centro", AutoCentro);
     m_chooser.addOption("Derecha", AutoDerecha);
     m_chooser.addOption("Izquierda", AutoIzquierda);
+    m_chooser.addOption("Pathplanner", PruebaPathPlanner);
     SmartDashboard.putData(m_chooser);
   }
 

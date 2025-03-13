@@ -24,7 +24,7 @@ public class Constants {
 
         public static final double k_chasssisKP = 1.0474;
         public static final double k_chasssisKV = 0.1392;
-        public static final double k_chasssisKS = 1.0281;
+        public static final double k_chasssisKS = 0.6281;
         public static final double k_chasssisKA = 0.12516;
     }
 

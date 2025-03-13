@@ -16,6 +16,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPLTVController;
 
+import edu.wpi.first.math.controller.LTVDifferentialDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -58,6 +59,7 @@ public class DriveTrain extends SubsystemBase {
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
   private SlewRateLimiter accelerationRamp = new SlewRateLimiter(0.3, -0.5, 0);
 
+ 
 
   //Encoders
 private Encoder m_rightEncoder = new Encoder(6, 7);
@@ -70,6 +72,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
+  private PIDController SimplePID = new PIDController(0.8, 0, 0.001);
 
   public DriveTrain() {
      try{
@@ -185,7 +188,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     
     
     DifferentialDriveWheelSpeeds speeds = m_kinematics.toWheelSpeeds(chassisSpeeds);
-    speeds.desaturate(0.5);
+    speeds.desaturate(2);
     
     
     final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
@@ -231,6 +234,29 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_gyro.setYaw(0);
     m_gyro.reset();
     m_leftLeader.setVoltage(getAverageDistance());
+  }
+
+  //Prueba autos
+
+  public void goToPosition(double p)
+  {
+    SimplePID.calculate(m_odometry.getPoseMeters().getX(), p);
+  }
+
+  public void goToAngle(double a){
+    controlledDrive(0, SimplePID.calculate(m_gyro.getYaw().getValueAsDouble(), a));
+  }
+  public boolean isInPosition(double p)
+  {
+    if (m_odometry.getPoseMeters().getX() >= p || m_odometry.getPoseMeters().getX() <= p -0.1) {
+      return true;
+    } else return false;
+  }
+
+  public boolean isInAngle(double a){
+    if (m_gyro.getYaw().getValueAsDouble() >= a || m_gyro.getYaw().getValueAsDouble() <= a -1) {
+      return true;
+    } else return false;
   }
 
 

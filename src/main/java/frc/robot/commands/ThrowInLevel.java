@@ -40,14 +40,10 @@ public class ThrowInLevel extends Command {
      
       timer.start();
       timerstart = true;
-    }
-
-    if (timerstart && timer.get() >0.6&& check1 == false) {
+    } else if (timerstart && timer.get() >0.6&& check1 == false) {
       hasthrown = true;
       check1 = true;
-    }
-
-    if (elevator.isInPosition() && hasthrown == true && timer.get() >0.3 && coralShooter.getColor() && check1 == true) {
+    } else if (elevator.isInPosition() && hasthrown == true && timer.get() >0.8 && coralShooter.getColor() && check1 == true) {
       coralShooter.setSpeed(0.5);
     }
     if (!coralShooter.getColor() && elevator.getSetpoint() != 0) {
