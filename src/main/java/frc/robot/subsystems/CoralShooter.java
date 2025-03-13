@@ -70,6 +70,20 @@ public class CoralShooter extends SubsystemBase {
       });
   }
 
+  public Command shootPosition(){
+    return runEnd(
+      ()->{
+        if (NewElevator.getInstance().getSetpoint() == 0 || NewElevator.getInstance().getSetpoint() == 71.75 || NewElevator.getInstance().getSetpoint() == 0.7){
+          m_rightMotor.set(0.2);
+        } else {
+          m_rightMotor.set(0.4);
+        }
+      }
+      ,()->{
+        m_rightMotor.set(0);
+      });
+  }
+
  public double getLaser(){
     LaserCan.Measurement measurement = m_laserSensor.getMeasurement();
     if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {

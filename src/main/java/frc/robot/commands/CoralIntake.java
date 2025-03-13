@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralShooter;
@@ -14,7 +16,13 @@ public class CoralIntake extends Command {
   private CoralShooter coral = CoralShooter.getInstance();
   private Timer timer = new Timer();
   private boolean check = false;
+  private boolean detect = false;
   public CoralIntake() {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(coral);
+  }
+
+  public CoralIntake(BooleanSupplier prueba) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(coral);
   }
@@ -31,9 +39,13 @@ public class CoralIntake extends Command {
   @Override
   public void execute() {
     //Starts intake when the laserCAN detects coral
+    if (timer.get() > 0.034) {
+      coral.setSpeed(0.19);
+      detect = true;
+    }
     if(check == false && coral.getLaser() < 90) {
       
-      coral.setSpeed(0.2);
+      coral.setSpeed(0.3);
     }
 
     //Starts timer when the colorsensor detects a coral
@@ -41,6 +53,7 @@ public class CoralIntake extends Command {
       check = true;
       timer.start();
     } 
+
   }
 
   @Override
@@ -51,6 +64,6 @@ public class CoralIntake extends Command {
   @Override
   public boolean isFinished() {
     //Ends 0.065 seconds after the colorsensor detects the coral
-    return timer.get() > 0.065;
+    return coral.getColor() && detect == true;
   }
 }

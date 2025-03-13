@@ -120,9 +120,13 @@ public class Algae extends SubsystemBase {
     }
   }
 
-  public Command take (double speed){
+  public Command take (double speed, double setpoint){
     return runEnd(()->{
-          mIntakeMotor.set(speed);
+      setPoint = setpoint;
+      if (isInPosition()) {
+        mIntakeMotor.set(speed);
+      }
+          
     }, 
     ()-> {
       if (speed > 0) {
@@ -179,11 +183,12 @@ public class Algae extends SubsystemBase {
   public double getWristReferenceToHorizontal() {
     return getWristAngle() + AlgueConstants.kWristOffset;
   }
-  public boolean isInPosition(){
-    if(getWristAngle() <= setPoint-0.1 || getWristAngle() >= setPoint+0.1){
-      mIntakeMotor.getForwardLimitSwitch();
-      return true;
-    }
-    return false;
+
+    public boolean isInPosition(){
+      if(encoder.getPosition() >= setPoint + 0.3 || encoder.getPosition() <= setPoint - 0.3){
+          return true;
+      } else {
+          return false;
+      }
   }
 }

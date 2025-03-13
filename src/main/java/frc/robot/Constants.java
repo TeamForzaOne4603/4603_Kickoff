@@ -9,10 +9,10 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
 public class Constants {
     public static class ChassisConstants{
-        public static final int k_leftLeader = 4; 
-        public static final int k_leftFollower = 5;
-        public static final int k_rightLeader = 2;  
-        public static final int k_rightFollower = 3;
+        public static final int k_leftLeader = 3; 
+        public static final int k_leftFollower = 2;
+        public static final int k_rightLeader = 5;  
+        public static final int k_rightFollower = 4;
         public static final int k_pygeon = 13;
 
         public static final int k_statorLimit = 140;
@@ -86,24 +86,28 @@ public class Constants {
         public static final  int k_rightMotor = 24;
         public static final  int k_leftMotor = 25;
 
-        public static final double k_P = 0.35;
+        public static final double k_P = 1.6;
         public static final double k_I = 0;
-        public static final double k_D = 0;
+        public static final double k_D = 0.001;
         public static final double k_IZone = 17;
-        public static final double k_G = 1.2;
-        public static final double k_maxVelocity = 90;
-        public static final double k_maxAcceleration = 180;
-        public static final double k_V = 0.1392;
-        public static final double k_S = 1.0281;
+        public static final double k_G = 0.11;
+        public static final double k_maxVelocity = 55;
+        public static final double k_maxAcceleration = 80;
+        public static final double k_V = 0.34;
+        public static final double k_S = 0.02;
 
-        public static final double kStowHeight = 5;
-        public static final double kL2Height = 25;
+        public static final double kStowHeight = 1;
+        public static final double kL2Height = 10;
         public static final double kL3Height = 28;
         public static final double kL4Height = 60;
         public static final double kMaxHeight = 70;
 
         public static final double k_encoderCPR = 2048;
-        public static final double k_wheelDiameterMeters = Units.inchesToMeters(6);
-        public static final double k_encoderDistancePerPulse = -(Math.PI * k_wheelDiameterMeters) / k_encoderCPR;
+        public static final double k_wheelDiameterMeters = Units.inchesToMeters(1+(7/8));
+        public static final double k_encoderDistancePerPulse = (Math.PI * k_wheelDiameterMeters) / k_encoderCPR*200;
+    }
+
+    public static class ClimberConstants {
+        public static final int k_armId = 32;
     }
 }
