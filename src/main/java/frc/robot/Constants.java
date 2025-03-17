@@ -28,31 +28,6 @@ public class Constants {
         public static final double k_chasssisKA = 0.12516;
     }
 
-    public static class ElevatorConstants{
-        public static final  int k_rightMotor = 24;
-        public static final  int k_leftMotor = 25;
-
-        public static final double k_elevatorKP = 0.35;
-        public static final double k_elevatorKI = 0;
-        public static final double k_elevatorKD = 0;
-        public static final double k_elevatorKIZone = 17;
-        public static final double kG = 8.5;
-        public static final double k_maxVelocity = 90;
-        public static final double k_maxAcceleration = 180;
-
-        public static final int k_supplyLimit = 40;
-
-        public static final double kStowHeight = 15;
-        public static final double kL2Height = 50;
-        public static final double kL3Height = 80;
-        public static final double kL4Height = 90;
-        public static final double kMaxHeight = 26;
-        public static final double kGroundAlgaeHeight = 0;
-        public static final double kScoreAlgaeHeight = 0.0;
-        public static final double kLowAlgaeHeight = 15;
-        public static final double kHighAlgaeHeight = 12;
-    }
-
     public static class AlgueConstants{
         public static final int k_AlgueMotor =23;
         public static final int k_WristhMotor = 20;
@@ -86,21 +61,23 @@ public class Constants {
         public static final  int k_rightMotor = 24;
         public static final  int k_leftMotor = 25;
 
-        public static final double k_P = 1.6;
+        public static final double k_P = 0.85;
         public static final double k_I = 0;
-        public static final double k_D = 0.001;
+        public static final double k_D = 0;
         public static final double k_IZone = 17;
         public static final double k_G = 0.11;
-        public static final double k_maxVelocity = 55;
-        public static final double k_maxAcceleration = 80;
-        public static final double k_V = 0.34;
-        public static final double k_S = 0.02;
+        public static final double k_maxVelocity = 95;
+        public static final double k_maxAcceleration = 120;
+        public static final double k_V = 0.5;
+        public static final double k_S = 0.04;
 
-        public static final double kStowHeight = 1;
-        public static final double kL2Height = 10;
-        public static final double kL3Height = 28;
-        public static final double kL4Height = 60;
-        public static final double kMaxHeight = 70;
+        public static final double kStowHeight = 0.5;
+        public static final double kL2Height = 10.6;
+        public static final double kL3Height = 35.4;
+        public static final double kL4Height = 73.94;
+        public static final double kMaxHeight = 74;
+
+        //0.7 10.4 71.75.35.4
 
         public static final double k_encoderCPR = 2048;
         public static final double k_wheelDiameterMeters = Units.inchesToMeters(1+(7/8));

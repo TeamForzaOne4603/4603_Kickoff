@@ -2,6 +2,30 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Dead Code
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -93,11 +117,12 @@ public class Algae extends SubsystemBase {
     double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristReferenceToHorizontal()),
         Math.toRadians(mWristPIDController.getSetpoint().velocity));
 
-    mWristMotor.setVoltage(pidCalc + ffCalc); 
+    //mWristMotor.setVoltage(pidCalc + ffCalc); 
+
 
     SmartDashboard.putNumber("Brazo", encoder.getPosition());
 
-    switch (state) {
+    /*switch (state) {
       case 0:
         
         break;
@@ -116,9 +141,9 @@ public class Algae extends SubsystemBase {
           break;
     
       default:
-        break;
+        break;*/
     }
-  }
+  
 
   public Command take (double speed, double setpoint){
     return runEnd(()->{
@@ -141,13 +166,14 @@ public class Algae extends SubsystemBase {
 
   public Command shoot(){
     return runEnd(()-> {
-      if (state == 2 || state == 1) {
+      /*if (state == 2 || state == 1) {
         state = 1;
-        mIntakeMotor.set(0.3);
+        
       } else if (state == 3 || state == 4) {
         state = 4;
-        mIntakeMotor.set(-0.3);
-      }
+        mIntakeMotor.set(-0.3);*/
+      //}
+      mWristMotor.set(0.8);
     }, 
     ()-> {state = 0;
       mIntakeMotor.set(0);
@@ -192,3 +218,26 @@ public class Algae extends SubsystemBase {
       }
   }
 }
+/*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Dead Code
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */

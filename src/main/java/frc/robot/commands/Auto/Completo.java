@@ -4,55 +4,59 @@
 
 package frc.robot.commands.Auto;
 
+import com.ctre.phoenix6.hardware.core.CoreTalonFX;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.NewElevatorConstants;
 import frc.robot.subsystems.CoralShooter;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.NewElevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Recto extends Command {
-  /** Creates a new Recto. */
+public class Completo extends Command {
+  /** Creates a new Desesperacion. */
+  private CoralShooter coral = CoralShooter.getInstance();
+  private NewElevator elevator = NewElevator.getInstance();
   private DriveTrain drive = DriveTrain.getInstance();
-  private CoralShooter coral =  CoralShooter.getInstance();
-  private double setpoint;
-  private Timer time = new Timer();
-  public Recto(double position) {
-    addRequirements(drive);
-    this.setpoint = position;
+  private Timer timer = new Timer();
+
+
+  public Completo() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(coral,elevator,drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    time.reset();
-    time.start();
-    //drive.goSimple();
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (time.get() < 2) {
-      
-      drive.controlledDrive(0.6, 0, false);
-    } else if (time.get() >= 2){
-      drive.controlledDrive(0, 0, false);
-      coral.posiciones();
+    if (timer.get()<1.5) {
+      drive.controlledDrive(0.4, 0, false);
+    } else if (timer.get() < 4) {
+      drive.controlledDrive(0, 0,false);
+      elevator.goToPosition(NewElevatorConstants.kL3Height);
+    } else if(timer.get() < 5.5){
+      coral.shootPosition();
+    } else if (timer.get() < 8) {
+      coral.setSpeed(0);
+      elevator.goToPosition(NewElevatorConstants.kStowHeight);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    drive.controlledDrive(0, 0, false);
-    coral.setSpeed(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return time.get() > 4;
-
+    return false;
   }
 }

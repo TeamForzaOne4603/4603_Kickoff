@@ -15,6 +15,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,9 +32,14 @@ public class Climber extends SubsystemBase {
     return mInstance;
   }
 
+  private PIDController simplePID = new PIDController(0.2, 0, 0.0001);
+  private double setpoint = 101.71684265136719;
+  private boolean positionControl = false;
+
   /** Creates a new Climber. */
   private SparkMax m_leftClimber = new SparkMax(ClimberConstants.k_armId, MotorType.kBrushless);
   private TalonFX m_rope = new TalonFX(42);
+
  // private SparkMax m_rightClimber = new SparkMax(8, MotorType.kBrushless);
   private RelativeEncoder m_Encoder = m_leftClimber.getEncoder();
 
@@ -50,6 +57,7 @@ public class Climber extends SubsystemBase {
       m_rope.getConfigurator().apply(tconfig);
       m_rope.setNeutralMode(NeutralModeValue.Brake);
 
+      m_Encoder.setPosition(0);
 
 
     m_leftClimber.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
@@ -57,18 +65,49 @@ public class Climber extends SubsystemBase {
   }
 
   public Command brazo(double speed){
-    return runEnd(()-> {m_leftClimber.set(speed);}, ()-> {m_leftClimber.set(0);});
+    return runEnd(()-> {m_leftClimber.set(speed);positionControl = false;}, ()-> {m_leftClimber.set(0);});
   }
   
 
   public Command Spool(double speed){
-    return runEnd(()-> {m_rope.set(speed);}, ()-> {m_rope.set(0);});
+    return runEnd(()-> {m_rope.set(speed);positionControl = false;}, ()-> {m_rope.set(0);});
   }
+
+  public void spool(double speed){
+    m_rope.set(speed);
+  }
+  public void Brazo(double speed){
+    m_rope.set(speed);
+  }
+
+  public Command GoToPosition(){
+    return runOnce(()-> {positionControl = true;});
+  }
+
+
 
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Escalador", m_Encoder.getPosition());
+
+    if (positionControl) {
+      m_leftClimber.set(simplePID.calculate(m_Encoder.getPosition(), setpoint));
+    }
+
+    if (isInPosition()) {
+      positionControl = false;
+    }
   }
+
+  public boolean isInPosition(){
+    if(m_Encoder.getPosition() <= setpoint + 0.1 && m_Encoder.getPosition() >= setpoint - 0.1){
+        return true;
+    } else {
+        return false;
+    }
 }
+}
+
+//101.71684265136719

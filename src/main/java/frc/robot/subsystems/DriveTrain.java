@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -16,7 +18,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPLTVController;
 
-import edu.wpi.first.math.controller.LTVDifferentialDriveController;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.LTVUnicycleController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -57,13 +60,14 @@ public class DriveTrain extends SubsystemBase {
   private TalonFXConfiguration m_rightConfiguration = new TalonFXConfiguration();
   private TalonFXConfiguration m_leftConfiguration = new TalonFXConfiguration();
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
-  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(0.3, -0.5, 0);
+  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(1, -0.5, 0);
 
  
 
   //Encoders
 private Encoder m_rightEncoder = new Encoder(6, 7);
   private Encoder m_leftEncoder = new Encoder(8, 9);
+  
 
   //Odometry and ClosedLoopControl
   private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
@@ -72,7 +76,9 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
-  private PIDController SimplePID = new PIDController(0.8, 0, 0.001);
+  private PIDController SimplePID = new PIDController(1.1, 0, 0.0001);
+  private LTVUnicycleController autos  = new LTVUnicycleController(VecBuilder.fill(0.0625, 0.125, 2.0), VecBuilder.fill(1.0, 2.0), 0.02, 5);
+  private boolean isBlue;
 
   public DriveTrain() {
      try{
@@ -143,6 +149,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
       () -> {
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
+      
           return alliance.get() == DriverStation.Alliance.Red;
         }
         return false;
@@ -151,12 +158,25 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
       }catch(Exception e){
         DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
       }
+      var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+      
+          isBlue = (alliance.get() == DriverStation.Alliance.Blue);
+        } else {isBlue = true;};
+      
   }
   //Manual Drive
-  public void controlledDrive(double fwd, double rot){
-    double x = Math.abs(fwd) > 0.09 ? accelerationRamp.calculate(-fwd*0.35) : accelerationRamp.calculate(0); //Get forward axis, 0.09 deadband
-    double y = Math.abs(rot) > 0.09 ? rot*0.45 : 0; //Get rotational axis, 0.09 deadband
+  public void controlledDrive(double fwd, double rot, Boolean turbo){
+    double turbos = 1;
+    if(turbo){
+      turbos = 1.5;
+    } else {
+      turbos = 1;
+    }
+    double x = Math.abs(fwd) > 0.09 ? accelerationRamp.calculate(-fwd*0.50 * turbos) : accelerationRamp.calculate(0); //Get forward axis, 0.09 deadband
+    double y = Math.abs(rot) > 0.09 ? rot*0.3 : 0; //Get rotational axis, 0.09 deadband
     double limit = NewElevator.getInstance().getPosition() > 20 ? 0.5 : 1; // If elevator is up, the chassis gets slower
+   
     leftOut.Output = (x + y) * limit;
     rightOut.Output = (x - y) * limit;
     m_leftLeader.setControl(leftOut);
@@ -173,11 +193,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), newPose);
   }
 
-  public double getAverageDistance(){
-    double leftDistance = m_leftEncoder.getDistance();
-    double rightDistance = m_rightEncoder.getDistance();
-    return (leftDistance + rightDistance) / 2;
-  }
+ 
 
   public ChassisSpeeds getChassisSpeeds(){
     var wheelSpeeds = new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
@@ -185,14 +201,12 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   }
 
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-    
-    
     DifferentialDriveWheelSpeeds speeds = m_kinematics.toWheelSpeeds(chassisSpeeds);
-    speeds.desaturate(2);
     
+    speeds.desaturate(1);
     
-    final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
-    final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
+    final double leftFeedforward = 0;//feedforward.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedforward = 0;//feedforward.calculate(speeds.rightMetersPerSecond);
 
     final double leftOutput =
       LeftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
@@ -202,30 +216,11 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     final VoltageOut leftvoltage = new VoltageOut((leftOutput + leftFeedforward));
     final VoltageOut righVoltage = new VoltageOut((rightOutput + rightFeedforward));
 
-    m_leftLeader.setControl(leftvoltage);
-    m_rightLeader.setControl(righVoltage);
+    //m_leftLeader.setControl(leftvoltage);
+    //m_rightLeader.setControl(righVoltage);
+    m_leftLeader.setVoltage(leftOutput*-1);
+    m_rightLeader.setVoltage(rightOutput*-1);
   }
-
-  public void driveAcceleration(double fwd, double rot)
-{
-  double x = Math.abs(fwd) > 0.09 ? -fwd*0.35 : 0;
-    double y = Math.abs(rot) > 0.09 ? rot*0.35 : 0;
-    double derecho = (x + y);
-    double izquierdo = (x - y);
-    final double leftFeedforward = feedforward.calculate(izquierdo);
-    final double rightFeedforward = feedforward.calculate(derecho);
-
-    final double leftOutput =
-      LeftPIDController.calculate(m_leftEncoder.getRate(), izquierdo);
-    final double rightOutput =
-      righController.calculate(m_rightEncoder.getRate(), derecho);
-      
-    final VoltageOut leftvoltage = new VoltageOut((leftOutput + leftFeedforward));
-    final VoltageOut righVoltage = new VoltageOut((rightOutput + rightFeedforward));
-
-    m_leftLeader.setControl(leftvoltage);
-    m_rightLeader.setControl(righVoltage);
-}
   //Odometry Functions
 
   public void resetPosition(){
@@ -233,30 +228,36 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_rightLeader.setPosition(0);
     m_gyro.setYaw(0);
     m_gyro.reset();
-    m_leftLeader.setVoltage(getAverageDistance());
   }
 
   //Prueba autos
 
   public void goToPosition(double p)
   {
-    SimplePID.calculate(m_odometry.getPoseMeters().getX(), p);
+    controlledDrive(SimplePID.calculate(m_odometry.getPoseMeters().getX(), p), 0, false);
   }
 
   public void goToAngle(double a){
-    controlledDrive(0, SimplePID.calculate(m_gyro.getYaw().getValueAsDouble(), a));
+    double p = isBlue == true ? 1 : -1;
+    a=a*p;
+    controlledDrive(0, SimplePID.calculate(m_gyro.getYaw().getValueAsDouble(), a),false );
   }
   public boolean isInPosition(double p)
   {
-    if (m_odometry.getPoseMeters().getX() >= p || m_odometry.getPoseMeters().getX() <= p -0.1) {
+    if (m_odometry.getPoseMeters().getX() >= p || m_odometry.getPoseMeters().getX() >= p -0.1) {
       return true;
     } else return false;
   }
 
   public boolean isInAngle(double a){
-    if (m_gyro.getYaw().getValueAsDouble() >= a || m_gyro.getYaw().getValueAsDouble() <= a -1) {
+   
+
+    if (m_gyro.getYaw().getValueAsDouble() >= a || m_gyro.getYaw().getValueAsDouble() >= a -1) {
       return true;
     } else return false;
+  }
+  public void goSimple(){
+    controlledDrive(0.1, 0, false);
   }
 
 
@@ -273,8 +274,15 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     SmartDashboard.putNumber("temp inf izq", m_leftFollower.getDeviceTemp().getValueAsDouble()); 
     SmartDashboard.putNumber("temp sup der", m_rightLeader.getDeviceTemp().getValueAsDouble()); 
     SmartDashboard.putNumber("temp inf der", m_rightFollower.getDeviceTemp().getValueAsDouble()); 
+    SmartDashboard.putNumber("izq", m_leftEncoder.getDistance()); 
+
+    SmartDashboard.putNumber("der", m_rightEncoder.getDistance()); 
+
 
 
 
   }
 }
+//Quieres que salgan 3, industrias peñoles, mecanisados laguna y petrolaguna
+//nos presentan como el equipo que nacio con un gran poder, el coopertition y viene a derrapar en la cancha con su robot M-K One
+//

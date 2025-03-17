@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.NewElevatorConstants;
 
 public class NewElevator extends SubsystemBase {
@@ -40,13 +39,13 @@ public class NewElevator extends SubsystemBase {
     private double setPoint = 0;
   
     public NewElevator() {
-        m_controller.reset(0);
+        //m_controller.reset(0);
         
       m_encoder.setDistancePerPulse(NewElevatorConstants.k_encoderDistancePerPulse);
       m_encoder.setReverseDirection(false);  
   
       SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-      elevatorConfig.smartCurrentLimit(ElevatorConstants.k_supplyLimit);
+      elevatorConfig.smartCurrentLimit(40);
       elevatorConfig.idleMode(IdleMode.kBrake);
       elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
       m_leftMotor.configure(elevatorConfig, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -63,9 +62,10 @@ public class NewElevator extends SubsystemBase {
         m_leftMotor.setVoltage(m_controller.calculate(m_encoder.getDistance(), setPoint) + m_feedforward.calculate(m_controller.getSetpoint().velocity));
       }
       SmartDashboard.putBoolean("IsInPosition", isInPosition());
+      SmartDashboard.putNumber("Elevador", m_encoder.getDistance());
+      SmartDashboard.putNumber(getName(), setPoint);
     }
-    
-  
+
     //*Manual Commands
     public Command manualMove(double speed){
     return runEnd(()->{
@@ -93,7 +93,7 @@ public class NewElevator extends SubsystemBase {
     public double getSetpoint(){return setPoint;}
 
     public boolean isInPosition(){
-        if(m_encoder.getDistance() >= setPoint + 0.3 && m_encoder.getDistance() <= setPoint - 0.3){
+        if(m_encoder.getDistance() <= setPoint + 0.1 && m_encoder.getDistance() >= setPoint - 0.1){
             return true;
         } else {
             return false;

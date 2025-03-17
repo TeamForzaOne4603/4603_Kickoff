@@ -6,17 +6,19 @@ package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.NewElevatorConstants;
 import frc.robot.subsystems.CoralShooter;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.NewElevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Recto extends Command {
-  /** Creates a new Recto. */
+public class Lados extends Command {
   private DriveTrain drive = DriveTrain.getInstance();
   private CoralShooter coral =  CoralShooter.getInstance();
+  private NewElevator elevator = NewElevator.getInstance();
   private double setpoint;
   private Timer time = new Timer();
-  public Recto(double position) {
+  public Lados(double position) {
     addRequirements(drive);
     this.setpoint = position;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -35,10 +37,15 @@ public class Recto extends Command {
   public void execute() {
     if (time.get() < 2) {
       
-      drive.controlledDrive(0.6, 0, false);
-    } else if (time.get() >= 2){
+      drive.controlledDrive(0.4, 0, false);
+    } else if (time.get() >= 2 && time.get() <= 4.7){
       drive.controlledDrive(0, 0, false);
+      elevator.setPosition(NewElevatorConstants.kL3Height);
+    } else if (time.get() > 4.7 && time.get() <= 6) {
       coral.posiciones();
+    }else if (time.get() > 6 && time.get() <= 9) {
+      coral.setSpeed(0);
+      elevator.setPosition(NewElevatorConstants.kStowHeight);
     }
   }
 
@@ -52,7 +59,7 @@ public class Recto extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return time.get() > 4;
+    return time.get() > 11;
 
   }
 }

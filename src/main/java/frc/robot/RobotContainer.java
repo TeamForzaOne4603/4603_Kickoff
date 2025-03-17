@@ -4,35 +4,52 @@
 
 package frc.robot;
 
+import java.util.function.IntFunction;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.ClimbCmd;
+import frc.robot.Constants.NewElevatorConstants;
+import frc.robot.commands.DriveCmd;
 import frc.robot.commands.CoralIntake;
+import frc.robot.commands.climbing;
+import frc.robot.commands.Auto.Anotar;
+import frc.robot.commands.Auto.Lados;
+import frc.robot.commands.Auto.Recto;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralShooter;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.LedLights;
 import frc.robot.subsystems.NewElevator;
 
 public class RobotContainer {
   
-  private final CommandXboxController joy_drive = new CommandXboxController(1);
-  private final CommandXboxController joy_op = new CommandXboxController(2);
-  private final CommandXboxController joy_Alga = new CommandXboxController(3);
-  private final CommandXboxController joy_Elevator = new CommandXboxController(4);
+  private final CommandXboxController joy_drive = new CommandXboxController(0);
+  private final CommandXboxController joy_op = new CommandXboxController(1);
+  private final CommandXboxController joy_Prueba = new CommandXboxController(3);
   private final DriveTrain tankDrive = DriveTrain.getInstance();
+  private final Climber climber = Climber.getInstance();
   private final CoralIntake comandoCoral = new CoralIntake();
-  private final ClimbCmd comandoDrive = new ClimbCmd(joy_drive);
+  private final DriveCmd comandoDrive = new DriveCmd(joy_drive, joy_drive.leftTrigger());
+  private  final climbing climbCmd = new climbing(joy_drive.a(),joy_drive.b(),joy_drive.x(),joy_drive.y());
+  private final LedLights leds = new LedLights();
+  
+
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private Command AutoCentro = new Command() {};
-  private Command AutoDerecha = new Command() {};
-  private Command AutoIzquierda = new Command() {};
-  private Command PruebaPathPlanner = new   PathPlannerAuto("null");
+  private Command avanzar = new Recto(2);
+  private Command lados = new Lados(2);
+
+  private Command anotarL1 = new Anotar(NewElevatorConstants.kStowHeight);
+  private Command anotarL2 = new Anotar(NewElevatorConstants.kL2Height);
+  private Command anotarL3 = new Anotar(NewElevatorConstants.kL3Height);
+  private Command anotarL4 = new Anotar(NewElevatorConstants.kL4Height);
+  
+
 
 
 
@@ -40,54 +57,53 @@ public class RobotContainer {
   
 
   public RobotContainer() {
+    
     tankDrive.setDefaultCommand(comandoDrive);
-    //tankDrive.setDefaultCommand(new RunCommand(() -> tankDrive.controlledDrive(-joy_drive.getLeftY(),-joy_drive.getRightX()), tankDrive));
+    climber.setDefaultCommand(climbCmd);
+    leds.setDefaultCommand(leds.run(()->{leds.LEdCommand(joy_op);}));
     configureBindings();
+    NamedCommands.registerCommand("L1", anotarL1);
 
-    m_chooser.setDefaultOption("Centro", AutoCentro);
-    m_chooser.addOption("Derecha", AutoDerecha);
-    m_chooser.addOption("Izquierda", AutoIzquierda);
+    
+    final Command PruebaPathPlanner = new PathPlannerAuto("Auto 1");
+    
+    final Command Angulo = new frc.robot.commands.Auto.Angulo(45);
+
+    m_chooser.setDefaultOption("Centro", avanzar);
+    m_chooser.addOption("Angulo", Angulo);
+    m_chooser.addOption("Lados", lados);
+
     m_chooser.addOption("Pathplanner", PruebaPathPlanner);
+    m_chooser.addOption("Ir recto", avanzar);
     SmartDashboard.putData(m_chooser);
   }
 
   private void configureBindings() {
 
-     joy_Elevator.leftStick().onTrue(comandoCoral);
-    joy_drive.rightTrigger().whileTrue(CoralShooter.getInstance().shootPosition());
-    joy_drive.rightTrigger().whileTrue(CoralShooter.getInstance().shootPosition());
+     joy_op.leftStick().onTrue(comandoCoral);
+    joy_drive.a().whileTrue(CoralShooter.getInstance().shootPosition());
+    joy_drive.rightTrigger().whileTrue(Climber.getInstance().brazo(0.3));
+    joy_drive.rightBumper().whileTrue(Climber.getInstance().brazo(-0.3));
+    joy_drive.leftTrigger().whileTrue(Climber.getInstance().Spool(-0.3));
+    joy_drive.leftBumper().whileTrue(Climber.getInstance().Spool(0.3));
+    joy_drive.b().onTrue(climber.GoToPosition());
 
-    joy_op.b().whileTrue(CoralShooter.getInstance().shoot(0.3));
-    joy_op.x().whileTrue(CoralShooter.getInstance().shoot(0.2));
-    joy_op.x().whileTrue(CoralShooter.getInstance().shoot(0.4));
+    joy_op.b().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kL3Height));
+    joy_op.y().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kL4Height));
+    joy_op.a().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kStowHeight));
+    joy_op.x().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kL2Height));
 
-    joy_Alga.a().whileTrue(Algae.getInstance().goToPosition(0));
-    joy_Alga.b().whileTrue(Algae.getInstance().goToPosition(60));
-    joy_Alga.y().whileTrue(Algae.getInstance().goToPosition(100));
-    joy_Alga.x().whileTrue(Algae.getInstance().goToPosition(80));
-    joy_Alga.leftBumper().whileTrue(Algae.getInstance().take(-1,60));
-    joy_Alga.rightBumper().whileTrue(Algae.getInstance().take(1,100));
-    joy_Alga.rightTrigger().whileTrue(Algae.getInstance().shoot());
-    joy_Alga.povUp().whileTrue(Algae.getInstance().reset());
-
-    joy_Alga.rightBumper().whileTrue(NewElevator.getInstance().goToPosition(13).alongWith(Algae.getInstance().goDown()));
-
-    joy_Elevator.rightBumper().and(joy_Elevator.x()).whileTrue(NewElevator.getInstance().manualMove(0.3));
-    joy_Elevator.rightBumper().and(joy_Elevator.a()).whileTrue(NewElevator.getInstance().manualMove(-0.25));
-    joy_Elevator.rightBumper().and(joy_Elevator.b()).whileTrue(CoralShooter.getInstance().shoot(0.2));
-
-    joy_Elevator.leftBumper().and(joy_Elevator.b()).whileTrue(NewElevator.getInstance().goToPosition(35.4));
-    joy_Elevator.leftBumper().and(joy_Elevator.y()).whileTrue(NewElevator.getInstance().goToPosition(71.75));
-    joy_Elevator.leftBumper().and(joy_Elevator.a()).onTrue(NewElevator.getInstance().goToPosition(0.7));
-    joy_Elevator.leftBumper().and(joy_Elevator.x()).onTrue(NewElevator.getInstance().goToPosition(10.4));
+    //joy_Prueba.rightBumper().onTrue(anotarL2);//anotarL2);
+    joy_Prueba.a().whileTrue(NewElevator.getInstance().manualMove(0.3));
+    joy_Prueba.b().whileTrue(NewElevator.getInstance().manualMove(-0.3));
 
 
-    joy_drive.a().whileTrue(Climber.getInstance().brazo(0.3));//bajar brazo
-    joy_drive.b().whileTrue(Climber.getInstance().brazo(-0.2));//subir brazo
-    joy_drive.x().whileTrue(Climber.getInstance().Spool(-0.2));//subir spool
-    joy_drive.y().whileTrue(Climber.getInstance().Spool(0.3)); //bajar spool
   }
 
+  
+  
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();  }
+
+    
 }
