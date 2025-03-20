@@ -14,7 +14,7 @@
  * 
  * 
  * 
- * Dead Code
+ * Dead Code,
  * 
  * 
  * 
@@ -48,6 +48,7 @@ public class Algae extends SubsystemBase {
   private static Algae mInstance;
 
   public static Algae getInstance() {
+
     if (mInstance == null) {
       mInstance = new Algae();
     }

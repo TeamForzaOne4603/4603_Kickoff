@@ -7,12 +7,14 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.NewElevatorConstants;
 
 public class NewElevator extends SubsystemBase {
@@ -37,6 +39,7 @@ public class NewElevator extends SubsystemBase {
   
     private boolean isInPositionControl = false;
     private double setPoint = 0;
+    private PIDController algo = new PIDController(0.1, 0, 0.0001);
   
     public NewElevator() {
         //m_controller.reset(0);
@@ -80,6 +83,14 @@ public class NewElevator extends SubsystemBase {
     return runOnce(()->{
       setPosition(position);
     });}
+
+    public Command goToBeggining (){
+      return runOnce(()->{
+        if (!CoralShooter.getInstance().getColor() && (setPoint == NewElevatorConstants.kL2Height || setPoint == NewElevatorConstants.kL3Height) && CoralShooter.getInstance().getLaser() > 90) {
+          setPosition(NewElevatorConstants.kStowHeight);
+
+        }
+      });}
   
     public void setPosition(double position){
       isInPositionControl = true;
@@ -93,7 +104,7 @@ public class NewElevator extends SubsystemBase {
     public double getSetpoint(){return setPoint;}
 
     public boolean isInPosition(){
-        if(m_encoder.getDistance() <= setPoint + 0.1 && m_encoder.getDistance() >= setPoint - 0.1){
+        if(m_encoder.getDistance() <= setPoint + 0.3 && m_encoder.getDistance() >= setPoint - 0.3){
             return true;
         } else {
             return false;

@@ -17,6 +17,7 @@ public class Anotar extends Command {
   private double position;
   private boolean hascoral = true;
   private boolean justInCase = false;
+  private boolean firstRun = false;
   
  
   public Anotar(double sp) {
@@ -34,23 +35,28 @@ public class Anotar extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (elevator.isInPosition() && coralShooter.getColor()) {
+    if (!firstRun) {
+      elevator.setPosition(position);
+      firstRun = true;
+    } else if (elevator.isInPosition() && coralShooter.getColor()) {
       coralShooter.posiciones();
-    } else if(!coralShooter.getColor() && hascoral == true){
+    } else if(elevator.isInPosition() && !coralShooter.getColor() && hascoral == true){
       hascoral = false;
-    } else if (hascoral = false){coralShooter.setSpeed(0);
-      elevator.setPosition(NewElevatorConstants.kStowHeight);
+      coralShooter.setSpeed(0);
+    } else if (hascoral == false){
+      coralShooter.setSpeed(0);
+      //elevator.setPosition(NewElevatorConstants.kStowHeight);
       justInCase = true;
     }
   }
 
   // Called once the command ends or is interrupted. 
   @Override
-  public void end(boolean interrupted) {coralShooter.setSpeed(0);}
+  public void end(boolean interrupted) {coralShooter.setSpeed(0);elevator.setPosition(NewElevatorConstants.kStowHeight);}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return hascoral = false && elevator.isInPosition() && justInCase == true;
+    return hascoral == false && elevator.isInPosition() && justInCase == true;
   }
 }

@@ -37,7 +37,7 @@ public class Climber extends SubsystemBase {
   private boolean positionControl = false;
 
   /** Creates a new Climber. */
-  private SparkMax m_leftClimber = new SparkMax(ClimberConstants.k_armId, MotorType.kBrushless);
+  private SparkMax m_leftClimber = new SparkMax(23, MotorType.kBrushless);
   private TalonFX m_rope = new TalonFX(42);
 
  // private SparkMax m_rightClimber = new SparkMax(8, MotorType.kBrushless);
@@ -93,7 +93,7 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Escalador", m_Encoder.getPosition());
 
     if (positionControl) {
-      m_leftClimber.set(simplePID.calculate(m_Encoder.getPosition(), setpoint));
+      m_rope.set(simplePID.calculate(m_Encoder.getPosition(), setpoint));
     }
 
     if (isInPosition()) {

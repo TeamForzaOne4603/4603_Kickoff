@@ -65,6 +65,6 @@ public class CoralIntake extends Command {
   @Override
   public boolean isFinished() {
     //Ends 0.065 seconds after the colorsensor detects the coral
-    return timer.get()>0.09;
+    return timer.get()>0.03;
   }
 }

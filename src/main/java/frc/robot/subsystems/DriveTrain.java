@@ -60,7 +60,7 @@ public class DriveTrain extends SubsystemBase {
   private TalonFXConfiguration m_rightConfiguration = new TalonFXConfiguration();
   private TalonFXConfiguration m_leftConfiguration = new TalonFXConfiguration();
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
-  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(1, -0.5, 0);
+  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(20, -0.65, 0);
 
  
 
@@ -71,12 +71,12 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
 
   //Odometry and ClosedLoopControl
   private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
-  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
-  private PIDController LeftPIDController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
-  private PIDController righController = new PIDController(ChassisConstants.k_chasssisKP, 0, 0);
+  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKA);
+  private PIDController LeftPIDController = new PIDController(0.4, 0, 0);
+  private PIDController righController = new PIDController(0.4, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
-  private PIDController SimplePID = new PIDController(1.1, 0, 0.0001);
+  private PIDController SimplePID = new PIDController(0.2, 0, 0);
   private LTVUnicycleController autos  = new LTVUnicycleController(VecBuilder.fill(0.0625, 0.125, 2.0), VecBuilder.fill(1.0, 2.0), 0.02, 5);
   private boolean isBlue;
 
@@ -173,14 +173,15 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     } else {
       turbos = 1;
     }
-    double x = Math.abs(fwd) > 0.09 ? accelerationRamp.calculate(-fwd*0.50 * turbos) : accelerationRamp.calculate(0); //Get forward axis, 0.09 deadband
-    double y = Math.abs(rot) > 0.09 ? rot*0.3 : 0; //Get rotational axis, 0.09 deadband
+    double x = Math.abs(fwd) > 0.11 ? accelerationRamp.calculate(-fwd*0.50 * turbos) : accelerationRamp.calculate(0); //Get forward axis, 0.09 deadband
+    double y = Math.abs(rot) > 0.11 ? rot*0.3 : 0; //Get rotational axis, 0.09 deadband
     double limit = NewElevator.getInstance().getPosition() > 20 ? 0.5 : 1; // If elevator is up, the chassis gets slower
    
     leftOut.Output = (x + y) * limit;
     rightOut.Output = (x - y) * limit;
     m_leftLeader.setControl(leftOut);
     m_rightLeader.setControl(rightOut);
+    
   }
 
   //Odometry functions
@@ -203,23 +204,23 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     DifferentialDriveWheelSpeeds speeds = m_kinematics.toWheelSpeeds(chassisSpeeds);
     
-    speeds.desaturate(1);
+    speeds.desaturate(3.5);
     
-    final double leftFeedforward = 0;//feedforward.calculate(speeds.leftMetersPerSecond);
-    final double rightFeedforward = 0;//feedforward.calculate(speeds.rightMetersPerSecond);
+    final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
 
     final double leftOutput =
       LeftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
     final double rightOutput =
       righController.calculate(m_rightEncoder.getRate(), speeds.rightMetersPerSecond);
       
-    final VoltageOut leftvoltage = new VoltageOut((leftOutput + leftFeedforward));
-    final VoltageOut righVoltage = new VoltageOut((rightOutput + rightFeedforward));
+    final VoltageOut leftvoltage = new VoltageOut(-(leftOutput + leftFeedforward));
+    final VoltageOut righVoltage = new VoltageOut(-(rightOutput + rightFeedforward));
 
-    //m_leftLeader.setControl(leftvoltage);
-    //m_rightLeader.setControl(righVoltage);
-    m_leftLeader.setVoltage(leftOutput*-1);
-    m_rightLeader.setVoltage(rightOutput*-1);
+    m_leftLeader.setControl(leftvoltage);
+    m_rightLeader.setControl(righVoltage);
+    //m_leftLeader.set(leftOutput*-1);
+    //m_rightLeader.set(rightOutput*-1);
   }
   //Odometry Functions
 
