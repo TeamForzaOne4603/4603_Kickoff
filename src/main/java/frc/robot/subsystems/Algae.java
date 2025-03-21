@@ -25,7 +25,6 @@
  * 
  * 
  */
-
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -114,9 +113,6 @@ public class Algae extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double pidCalc = mWristPIDController.calculate(getWristAngle(), setPoint);
-    double ffCalc = mWristFeedForward.calculate(Math.toRadians(getWristReferenceToHorizontal()),
-        Math.toRadians(mWristPIDController.getSetpoint().velocity));
 
     //mWristMotor.setVoltage(pidCalc + ffCalc); 
 

@@ -69,18 +69,16 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Check", checkPosition);
 
-
-
-    
-    
-    final Command Angulo = new frc.robot.commands.Auto.Angulo(45);
-
     m_chooser.setDefaultOption("Centro", avanzar);
-    m_chooser.addOption("Angulo", Angulo);
     m_chooser.addOption("Lados", lados);
     
-    final Command PruebaPathPlanner = new PathPlannerAuto("Auto Prueba");
+
+    final Command PruebaPathPlanner = new PathPlannerAuto("Centro");
+
+    final Command vuelta = new PathPlannerAuto("derecha");
     m_chooser.addOption("Pathplanner", PruebaPathPlanner);
+    m_chooser.addOption("Vuelta", vuelta);
+
     m_chooser.addOption("Ir recto", avanzar);
     SmartDashboard.putData(m_chooser);
   }
@@ -88,9 +86,9 @@ public class RobotContainer {
   private void configureBindings() {
 
      joy_op.leftStick().onTrue(comandoCoral);
-    joy_drive.a().whileTrue(CoralShooter.getInstance().shootPosition()).onFalse(NewElevator.getInstance().goToBeggining());
-    joy_drive.rightTrigger().whileTrue(Climber.getInstance().brazo(0.2));
-    joy_drive.rightBumper().whileTrue(Climber.getInstance().brazo(-0.2));
+    joy_drive.rightTrigger().whileTrue(CoralShooter.getInstance().shootPosition()).onFalse(NewElevator.getInstance().goToBeggining());
+    joy_op.rightTrigger().whileTrue(Climber.getInstance().brazo(-0.2));
+    joy_op.leftTrigger().whileTrue(Climber.getInstance().brazo(0.2));
     joy_drive.leftTrigger().whileTrue(Climber.getInstance().Spool(-0.3));
     joy_drive.leftBumper().whileTrue(Climber.getInstance().Spool(0.3));
     //joy_drive.b().onTrue(climber.GoToPosition());
@@ -99,10 +97,12 @@ public class RobotContainer {
     joy_op.y().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kL4Height));
     joy_op.a().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kStowHeight));
     joy_op.x().onTrue(NewElevator.getInstance().goToPosition(NewElevatorConstants.kL2Height));
+    joy_op.leftBumper().onTrue(Climber.getInstance().GoToPosition(-7.3));
+    joy_op.rightBumper().onTrue(Climber.getInstance().GoToPosition(-0.2));
 
     //joy_Prueba.rightBumper().onTrue(anotarL2);//anotarL2);
-    joy_Prueba.a().whileTrue(NewElevator.getInstance().manualMove(0.3));
-    joy_Prueba.b().whileTrue(NewElevator.getInstance().manualMove(-0.3));
+    //joy_op.povUp().whileTrue(NewElevator.getInstance().manualMove(0.3));
+    //joy_op.povDown().whileTrue(NewElevator.getInstance().manualMove(-0.3));
 
 
   }

@@ -3,8 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -18,8 +16,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPLTVController;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.LTVUnicycleController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -76,9 +72,6 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   private PIDController righController = new PIDController(0.4, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
-  private PIDController SimplePID = new PIDController(0.2, 0, 0);
-  private LTVUnicycleController autos  = new LTVUnicycleController(VecBuilder.fill(0.0625, 0.125, 2.0), VecBuilder.fill(1.0, 2.0), 0.02, 5);
-  private boolean isBlue;
 
   public DriveTrain() {
      try{
@@ -158,12 +151,6 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
       }catch(Exception e){
         DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", e.getStackTrace());
       }
-      var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-      
-          isBlue = (alliance.get() == DriverStation.Alliance.Blue);
-        } else {isBlue = true;};
-      
   }
   //Manual Drive
   public void controlledDrive(double fwd, double rot, Boolean turbo){
@@ -204,7 +191,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   public void driveChassisSpeeds(ChassisSpeeds chassisSpeeds) {
     DifferentialDriveWheelSpeeds speeds = m_kinematics.toWheelSpeeds(chassisSpeeds);
     
-    speeds.desaturate(3.5);
+    speeds.desaturate(3);
     
     final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
@@ -231,35 +218,6 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_gyro.reset();
   }
 
-  //Prueba autos
-
-  public void goToPosition(double p)
-  {
-    controlledDrive(SimplePID.calculate(m_odometry.getPoseMeters().getX(), p), 0, false);
-  }
-
-  public void goToAngle(double a){
-    double p = isBlue == true ? 1 : -1;
-    a=a*p;
-    controlledDrive(0, SimplePID.calculate(m_gyro.getYaw().getValueAsDouble(), a),false );
-  }
-  public boolean isInPosition(double p)
-  {
-    if (m_odometry.getPoseMeters().getX() >= p || m_odometry.getPoseMeters().getX() >= p -0.1) {
-      return true;
-    } else return false;
-  }
-
-  public boolean isInAngle(double a){
-   
-
-    if (m_gyro.getYaw().getValueAsDouble() >= a || m_gyro.getYaw().getValueAsDouble() >= a -1) {
-      return true;
-    } else return false;
-  }
-  public void goSimple(){
-    controlledDrive(0.1, 0, false);
-  }
 
 
 

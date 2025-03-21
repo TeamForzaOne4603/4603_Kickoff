@@ -37,29 +37,8 @@ public class CoralShooter extends SubsystemBase {
   private SparkMaxConfig m_leftConfig = new SparkMaxConfig();
   private LaserCan m_laserSensor = new LaserCan(CoralConstants.k_laserCAN);
   private ColorSensorV3 m_colorSensorV3 = new ColorSensorV3(I2C.Port.kOnboard); 
-  //private AddressableLED m_led = new AddressableLED(1);
-  //private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(600);
-
-  //private int ledStates = 0;
-  //private Timer time = new Timer();
-  
- 
-  
-
-    // Set the 
 
   public CoralShooter() {
-    /*time.stop();
-    time.reset();
-    // PWM port 9
-    // Must be a PWM header, not MXP or DIO
-    m_led.setLength(m_ledBuffer.getLength());
-
-    // Set the data
-    m_led.setData(m_ledBuffer);
-    m_led.start();
-*/
-    //Motor Config
     m_rightConfig
       .smartCurrentLimit(40)
       .closedLoopRampRate(0.3)
@@ -79,18 +58,6 @@ public class CoralShooter extends SubsystemBase {
   public void setSpeed(double speed){
     m_rightMotor.set(speed);
     m_leftMotor.set(speed);
-  }
-
-  public Command shoot(double speed){
-    return runEnd(
-      ()->{
-        m_rightMotor.set(speed);
-        m_leftMotor.set(speed);
-      }
-      ,()->{
-        m_rightMotor.set(0);
-        m_leftMotor.set(0);
-      });
   }
 
   public Command shootPosition(){
@@ -145,46 +112,6 @@ public class CoralShooter extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("sensor", getColor());
     SmartDashboard.putNumber("LaserCan", getLaser());
-    /*if(getColor()){
-      ledStates = 0;
-      time.stop();
-      time.reset();
-      LEDPattern.solid(Color.kGreen).applyTo(m_ledBuffer);
-      m_led.setData(m_ledBuffer);
-      
-    } else if (!getColor()) {
-      ledStates = 0;
-      time.stop();
-      time.reset();
-      LEDPattern.solid(Color.kRed).applyTo(m_ledBuffer);
-      m_led.setData(m_ledBuffer);
-    } else if (true) {
-      switch (ledStates) {
-        case 0:
-          time.start();
-          LEDPattern.solid(Color.kBlue).applyTo(m_ledBuffer);
-          ledStates = 1;
-          break;
-        case 1:
-          if (time.get()>=0.5) {
-            time.restart();
-            LEDPattern.solid(Color.kRed).applyTo(m_ledBuffer);
-            ledStates = 2;
-          }
-          break;
-        case 2:
-        if (time.get()>=0.5) {
-          time.restart();
-          LEDPattern.solid(Color.kBlue).applyTo(m_ledBuffer);
-          ledStates = 1;
-        }
-          break;
-        default: ledStates = 0;
-          break;
-      }
-      
-    }
-      */
   }
   
 }
