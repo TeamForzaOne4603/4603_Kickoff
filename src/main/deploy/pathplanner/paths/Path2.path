@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.849999999999999,
+        "x": 6.0,
         "y": 3.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.849999999999999,
+        "x": 7.0,
         "y": 3.85
       },
       "isLocked": false,
@@ -37,7 +37,7 @@
       },
       "prevControl": {
         "x": 4.401110690731748,
-        "y": 0.8729993535142184
+        "y": 0.8729993535142185
       },
       "nextControl": {
         "x": 3.032889344262295,
@@ -57,7 +57,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HUMAN AZUL"
     }
   ],
   "rotationTargets": [],
@@ -65,8 +65,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.6,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

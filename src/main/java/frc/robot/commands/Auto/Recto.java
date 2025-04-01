@@ -16,9 +16,9 @@ public class Recto extends Command {
   private CoralShooter coral =  CoralShooter.getInstance();
   private double setpoint;
   private Timer time = new Timer();
-  public Recto(double position) {
+  public Recto(double time) {
     addRequirements(drive);
-    this.setpoint = position;
+    this.setpoint = time;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -33,10 +33,10 @@ public class Recto extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (time.get() < 2) {
+    if (time.get() < setpoint) {
       
       drive.controlledDrive(0.6, 0, false);
-    } else if (time.get() >= 2){
+    } else if (time.get() >= setpoint){
       drive.controlledDrive(0, 0, false);
       coral.posiciones();
     }
@@ -52,7 +52,7 @@ public class Recto extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return time.get() > 4;
+    return time.get() > setpoint + 1.5;
 
   }
 }

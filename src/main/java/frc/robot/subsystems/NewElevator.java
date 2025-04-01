@@ -57,7 +57,7 @@ public class NewElevator extends SubsystemBase {
     @Override
     public void periodic() {
       // This method will be called once per scheduler run
-      if (isInPositionControl) {
+      if (isInPositionControl && CoralShooter.getInstance().getLaser()>90) {
         m_leftMotor.setVoltage(m_controller.calculate(m_encoder.getDistance(), setPoint) + m_feedforward.calculate(m_controller.getSetpoint().velocity));
       }
       SmartDashboard.putBoolean("IsInPosition", isInPosition());
@@ -77,12 +77,15 @@ public class NewElevator extends SubsystemBase {
    //Position Commands
    public Command goToPosition (double position){
     return runOnce(()->{
+      if (CoralShooter.getInstance().getLaser() > 90){
+        setPosition(position);
+      }
       setPosition(position);
     });}
 
     public Command goToBeggining (){
       return runOnce(()->{
-        if (!CoralShooter.getInstance().getColor() && (setPoint == NewElevatorConstants.kL2Height || setPoint == NewElevatorConstants.kL3Height) && CoralShooter.getInstance().getLaser() > 90) {
+        if (!CoralShooter.getInstance().getColor() && CoralShooter.getInstance().getLaser() > 90) {
           setPosition(NewElevatorConstants.kStowHeight);
         }
       });}

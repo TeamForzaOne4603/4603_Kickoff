@@ -16,11 +16,9 @@ public class Lados extends Command {
   private DriveTrain drive = DriveTrain.getInstance();
   private CoralShooter coral =  CoralShooter.getInstance();
   private NewElevator elevator = NewElevator.getInstance();
-  private double setpoint;
   private Timer time = new Timer();
   public Lados(double position) {
     addRequirements(drive);
-    this.setpoint = position;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

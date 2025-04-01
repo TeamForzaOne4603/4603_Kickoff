@@ -4,8 +4,6 @@
 
 package frc.robot.commands.Auto;
 
-import com.ctre.phoenix6.hardware.core.CoreTalonFX;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.NewElevatorConstants;

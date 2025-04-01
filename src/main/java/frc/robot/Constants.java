@@ -15,17 +15,17 @@ public class Constants {
         public static final int k_rightFollower = 4;
         public static final int k_pygeon = 13;
 
-        public static final int k_statorLimit = 160;
+        public static final int k_statorLimit = 120;//160
         public static final int k_supplyLimit = 60;
 
         public static final double k_encoderCPR = 2048;
         public static final double k_wheelDiameterMeters = Units.inchesToMeters(6);
         public static final double k_encoderDistancePerPulse = -(Math.PI * k_wheelDiameterMeters) / k_encoderCPR;
 
-        public static final double k_chasssisKP = 1.0474;
-        public static final double k_chasssisKV = 0.1792;//0.1792
-        public static final double k_chasssisKS = 0.8281;//0.8281
-        public static final double k_chasssisKA = 0.12516;
+        public static final double k_chasssisKP = 2.4;
+        public static final double k_chasssisKV = 2.12;//0.1792
+        public static final double k_chasssisKS = 0.1792;//0.8281
+        public static final double k_chasssisKA = 0.24;
     }
 
     public static class AlgueConstants{
@@ -61,17 +61,17 @@ public class Constants {
         public static final  int k_rightMotor = 24;
         public static final  int k_leftMotor = 25;
 
-        public static final double k_P = 0.9;
+        public static final double k_P = 1.4;
         public static final double k_I = 0;
         public static final double k_D = 0;
         public static final double k_IZone = 17;
-        public static final double k_G = 0.11;
-        public static final double k_maxVelocity = 95;
-        public static final double k_maxAcceleration = 120;
-        public static final double k_V = 0.5;
-        public static final double k_S = 0.04;
+        public static final double k_G = 0.2;
+        public static final double k_maxVelocity = 90;
+        public static final double k_maxAcceleration = 170;
+        public static final double k_V = 0.55;
+        public static final double k_S = 0.09;
 
-        public static final double kStowHeight = 0.1;
+        public static final double kStowHeight = 0.30;
         public static final double kL2Height = 10.6;
         public static final double kL3Height = 35.4;
         public static final double kL4Height = 73.94;

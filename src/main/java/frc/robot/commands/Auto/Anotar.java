@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Auto;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.NewElevatorConstants;
 import frc.robot.subsystems.CoralShooter;
@@ -18,6 +19,7 @@ public class Anotar extends Command {
   private boolean hascoral = true;
   private boolean justInCase = false;
   private boolean firstRun = false;
+  private Timer time = new Timer();
   
  
   public Anotar(double sp) {
@@ -30,6 +32,10 @@ public class Anotar extends Command {
   @Override
   public void initialize() {
     elevator.setPosition(position);
+    time.reset();
+    hascoral = true;
+    justInCase = false;
+    firstRun = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,9 +47,10 @@ public class Anotar extends Command {
     } else if (elevator.isInPosition() && coralShooter.getColor()) {
       coralShooter.posiciones();
     } else if(elevator.isInPosition() && !coralShooter.getColor() && hascoral == true){
+      
       hascoral = false;
-      coralShooter.setSpeed(0);
-    } else if (hascoral == false){
+      time.start();
+    } else if (hascoral == false && time.get() > 0.1){
       coralShooter.setSpeed(0);
       //elevator.setPosition(NewElevatorConstants.kStowHeight);
       justInCase = true;

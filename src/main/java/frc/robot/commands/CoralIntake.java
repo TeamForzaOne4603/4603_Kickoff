@@ -15,6 +15,8 @@ public class CoralIntake extends Command {
   /** Creates a new CoralIntake. */
   private CoralShooter coral = CoralShooter.getInstance();
   private Timer timer = new Timer();
+  private Timer timer2 = new Timer();
+  private boolean timecheck = false;
   private boolean check = false;
   private boolean detect = false;
   public CoralIntake() {
@@ -34,26 +36,37 @@ public class CoralIntake extends Command {
     timer.stop();
     timer.reset();
     timer.stop();
+    timer2.stop();
+    timer2.reset();
+    timer2.stop();
   }
 
   @Override
   public void execute() {
     //Starts intake when the laserCAN detects coral
-    if (timer.get() > 0.17) {
-      coral.setSpeed(0.1);
+    if (timer.get() > 0.04) {
+      coral.setSpeed(0.12);
       detect = true;
     }
     if(check == false && coral.getLaser() < 90) {
       
-      coral.setSpeed(0.2);
+      coral.setSpeed(0.18);
     }
 
     //Starts timer when the colorsensor detects a coral
     if (check == false && coral.getColor() ) {
       check = true;
       timer.start();
-      coral.setSpeed(0.135);
+      coral.setSpeed(0.14);
     } 
+
+    if (coral.getLaser() > 150 && timecheck == false) {
+      timer2.start();
+      timecheck = true;
+    } else if (!(coral.getLaser() > 150)) {
+      timer2.reset();
+      timecheck = false;
+    }
 
   }
 
@@ -65,6 +78,6 @@ public class CoralIntake extends Command {
   @Override
   public boolean isFinished() {
     //Ends 0.065 seconds after the colorsensor detects the coral
-    return timer.get()>0.03;
+    return detect == true  && coral.getLaser() > 150 && check == true && timer2.get()>0.02;
   }
 }

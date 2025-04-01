@@ -3,13 +3,14 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFX;                            
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -27,6 +28,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ChassisConstants;
 
@@ -47,6 +49,7 @@ public class DriveTrain extends SubsystemBase {
   private TalonFX m_rightLeader;
   private TalonFX m_rightFollower;
   private Pigeon2 m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
+  private Orchestra musics = new Orchestra();
 
   //DutyCycle
   private final DutyCycleOut leftOut;
@@ -56,22 +59,27 @@ public class DriveTrain extends SubsystemBase {
   private TalonFXConfiguration m_rightConfiguration = new TalonFXConfiguration();
   private TalonFXConfiguration m_leftConfiguration = new TalonFXConfiguration();
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
-  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(20, -0.65, 0);
+  private SlewRateLimiter accelerationRamp = new SlewRateLimiter(20, -1.5, 0);
 
  
 
   //Encoders
 private Encoder m_rightEncoder = new Encoder(6, 7);
   private Encoder m_leftEncoder = new Encoder(8, 9);
+
+ 
   
 
   //Odometry and ClosedLoopControl
+
   private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
-  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKA);
-  private PIDController LeftPIDController = new PIDController(0.4, 0, 0);
-  private PIDController righController = new PIDController(0.4, 0, 0);
+  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
+  private PIDController LeftPIDController = new PIDController(2.4, 0, 0);
+  private PIDController righController = new PIDController(2.4, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
+ // private PoseEstimator fe = new PoseEstimator<>(m_kinematics, m_odometry, VecBuilder.fill(0.125, 0.25, 0.2), VecBuilder.fill(0.125, 0.25, 3));
+
 
   public DriveTrain() {
      try{
@@ -90,6 +98,12 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_rightLeader = new TalonFX(ChassisConstants.k_rightLeader);
     m_rightFollower = new TalonFX(ChassisConstants.k_rightFollower);
     m_gyro = new Pigeon2(ChassisConstants.k_pygeon);
+
+    musics.addInstrument(m_leftFollower,0);
+    musics.addInstrument(m_rightFollower,1);
+    musics.addInstrument(m_leftLeader,3);
+    musics.addInstrument(m_rightLeader,2);
+    var status = musics.loadMusic("cucaracha.chrp");
   
 
     //Motor configuration
@@ -137,7 +151,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
       this::resetPose, 
       this::getChassisSpeeds, 
       this::driveChassisSpeeds,
-      new PPLTVController(0.02,4.8),
+      new PPLTVController(0.02,0.6),
       config,
       () -> {
         var alliance = DriverStation.getAlliance();
@@ -160,9 +174,9 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     } else {
       turbos = 1;
     }
-    double x = Math.abs(fwd) > 0.11 ? accelerationRamp.calculate(-fwd*0.50 * turbos) : accelerationRamp.calculate(0); //Get forward axis, 0.09 deadband
-    double y = Math.abs(rot) > 0.11 ? rot*0.3 : 0; //Get rotational axis, 0.09 deadband
-    double limit = NewElevator.getInstance().getPosition() > 20 ? 0.5 : 1; // If elevator is up, the chassis gets slower
+    double x = Math.abs(fwd) > 0.11 ? accelerationRamp.calculate(-fwd*0.50 * turbos) : accelerationRamp.calculate(0); //Get forward axis, 0.11 deadband
+    double y = Math.abs(rot) > 0.11 ? rot*0.3 : 0; //Get rotational axis, 0.11 deadband
+    double limit = NewElevator.getInstance().getPosition() > 28 ? 0.5 : 1; // If elevator is up, the chassis gets slower
    
     leftOut.Output = (x + y) * limit;
     rightOut.Output = (x - y) * limit;
@@ -174,14 +188,11 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   //Odometry functions
    public Pose2d getPose(){
    return m_odometry.getPoseMeters();
-    
   }
 
   public void resetPose(Pose2d newPose) {
     m_odometry.resetPosition(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance(), newPose);
   }
-
- 
 
   public ChassisSpeeds getChassisSpeeds(){
     var wheelSpeeds = new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
@@ -206,8 +217,6 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
 
     m_leftLeader.setControl(leftvoltage);
     m_rightLeader.setControl(righVoltage);
-    //m_leftLeader.set(leftOutput*-1);
-    //m_rightLeader.set(rightOutput*-1);
   }
   //Odometry Functions
 
@@ -218,7 +227,15 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     m_gyro.reset();
   }
 
-
+  public Command stop(){
+    return runEnd(
+        () -> {
+          musics.play();
+        },
+        ()->{
+          musics.stop();
+        });
+  }
 
 
 
@@ -234,14 +251,6 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     SmartDashboard.putNumber("temp sup der", m_rightLeader.getDeviceTemp().getValueAsDouble()); 
     SmartDashboard.putNumber("temp inf der", m_rightFollower.getDeviceTemp().getValueAsDouble()); 
     SmartDashboard.putNumber("izq", m_leftEncoder.getDistance()); 
-
-    SmartDashboard.putNumber("der", m_rightEncoder.getDistance()); 
-
-
-
-
+    SmartDashboard.putNumber("der", m_rightEncoder.getDistance());
   }
 }
-//Quieres que salgan 3, industrias peñoles, mecanisados laguna y petrolaguna
-//nos presentan como el equipo que nacio con un gran poder, el coopertition y viene a derrapar en la cancha con su robot M-K One
-//

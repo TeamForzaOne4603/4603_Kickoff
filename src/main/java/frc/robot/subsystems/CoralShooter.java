@@ -60,12 +60,23 @@ public class CoralShooter extends SubsystemBase {
     m_leftMotor.set(speed);
   }
 
+  public Command Commandspeed(double speeds){
+    return runEnd(()->{
+      m_rightMotor.set(speeds);
+      m_leftMotor.set(speeds);
+    }, 
+    ()-> {
+      m_rightMotor.set(0);
+      m_leftMotor.set(0);
+    });
+  }
+
   public Command shootPosition(){
     return runEnd(
       ()->{
         if (NewElevator.getInstance().getSetpoint() == 0  || NewElevator.getInstance().getSetpoint() == NewElevatorConstants.kStowHeight){
-          m_rightMotor.set(0.1);
-          m_leftMotor.set(0.2);
+          m_rightMotor.set(0.15);
+          m_leftMotor.set(0.25);
         } else if (NewElevator.getInstance().getSetpoint() == NewElevatorConstants.kL4Height) {
           m_rightMotor.set(0.15);
           m_leftMotor.set(0.15);
@@ -85,8 +96,8 @@ public class CoralShooter extends SubsystemBase {
       m_rightMotor.set(0.1);
       m_leftMotor.set(0.2);
     } else if (NewElevator.getInstance().getSetpoint() == NewElevatorConstants.kL4Height) {
-      m_rightMotor.set(0.3);
-      m_leftMotor.set(0.3);
+      m_rightMotor.set(0.15);
+      m_leftMotor.set(0.15);
     }else {
       m_rightMotor.set(0.4);
       m_leftMotor.set(0.4);}

@@ -35,22 +35,22 @@ public class Climber extends SubsystemBase {
   private boolean positionControl = false;
 
   /** Creates a new Climber. */
-  private SparkMax m_leftClimber = new SparkMax(23, MotorType.kBrushless);
+  private SparkMax m_algae = new SparkMax(23, MotorType.kBrushless);
   private TalonFX m_rope = new TalonFX(42);
 
  // private SparkMax m_rightClimber = new SparkMax(8, MotorType.kBrushless);
-  private RelativeEncoder m_Encoder = m_leftClimber.getEncoder();
+  private RelativeEncoder m_Encoder = m_algae.getEncoder();
 
   public Climber() {
     SparkMaxConfig LeftConfig = new SparkMaxConfig();
-    TalonFXConfiguration tconfig = new TalonFXConfiguration();
     LeftConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(45)
         .inverted(true);
 
+      TalonFXConfiguration tconfig = new TalonFXConfiguration();
       tconfig.CurrentLimits.SupplyCurrentLimit = 40;
-      tconfig.CurrentLimits.StatorCurrentLimit = 80;
+      tconfig.CurrentLimits.StatorCurrentLimit = 140;
 
       m_rope.getConfigurator().apply(tconfig);
       m_rope.setNeutralMode(NeutralModeValue.Brake);
@@ -58,11 +58,11 @@ public class Climber extends SubsystemBase {
       m_Encoder.setPosition(0);
 
 
-    m_leftClimber.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      m_algae.configure(LeftConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public Command brazo(double speed){
-    return runEnd(()-> {m_leftClimber.set(speed);positionControl = false;}, ()-> {m_leftClimber.set(0);});
+    return runEnd(()-> {m_algae.set(speed);positionControl = false;}, ()-> {m_algae.set(0);});
   }
   
 
@@ -86,16 +86,8 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Braazo", m_Encoder.getPosition());
 
     if (positionControl) {
-      m_leftClimber.set(simplePID.calculate(m_Encoder.getPosition(), setpoint));
+      m_algae.set(simplePID.calculate(m_Encoder.getPosition(), setpoint));
     }
   }
-
-  public boolean isInPosition(){
-    if(m_Encoder.getPosition() <= setpoint + 0.1 && m_Encoder.getPosition() >= setpoint - 0.1){
-        return true;
-    } else {
-        return false;
-    }
-}
 }
 
