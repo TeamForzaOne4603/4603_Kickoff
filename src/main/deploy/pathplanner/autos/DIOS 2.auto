@@ -19,13 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Check"
+            "name": "L2"
           }
         },
         {
@@ -35,21 +29,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.15
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Intake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
           }
         },
         {
@@ -67,7 +49,13 @@
         {
           "type": "named",
           "data": {
-            "name": "L2"
+            "name": "L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BajarAlga"
           }
         },
         {
@@ -80,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "INFERIOR",
   "choreoAuto": false
 }

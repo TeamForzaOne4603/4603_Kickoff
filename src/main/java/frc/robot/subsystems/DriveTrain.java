@@ -61,25 +61,19 @@ public class DriveTrain extends SubsystemBase {
   private CurrentLimitsConfigs m_currentConfig = new CurrentLimitsConfigs();
   private SlewRateLimiter accelerationRamp = new SlewRateLimiter(20, -1.5, 0);
 
- 
-
   //Encoders
-private Encoder m_rightEncoder = new Encoder(6, 7);
+  private Encoder m_rightEncoder = new Encoder(6, 7);
   private Encoder m_leftEncoder = new Encoder(8, 9);
 
- 
-  
-
   //Odometry and ClosedLoopControl
-
   private DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(0.525);
-  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
+  private SimpleMotorFeedforward rightfeedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
+  private SimpleMotorFeedforward leftfeedforward = new SimpleMotorFeedforward(ChassisConstants.k_chasssisKS,ChassisConstants.k_chasssisKV,ChassisConstants.k_chasssisKA);
+
   private PIDController LeftPIDController = new PIDController(2.4, 0, 0);
   private PIDController righController = new PIDController(2.4, 0, 0);
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
   private RobotConfig config;
- // private PoseEstimator fe = new PoseEstimator<>(m_kinematics, m_odometry, VecBuilder.fill(0.125, 0.25, 0.2), VecBuilder.fill(0.125, 0.25, 3));
-
 
   public DriveTrain() {
      try{
@@ -105,7 +99,6 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     musics.addInstrument(m_rightLeader,2);
     var status = musics.loadMusic("cucaracha.chrp");
   
-
     //Motor configuration
     m_currentConfig.StatorCurrentLimitEnable = true;
     m_currentConfig.StatorCurrentLimit = ChassisConstants.k_statorLimit;
@@ -151,7 +144,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
       this::resetPose, 
       this::getChassisSpeeds, 
       this::driveChassisSpeeds,
-      new PPLTVController(0.02,0.6),
+      new PPLTVController(0.02,1.5),
       config,
       () -> {
         var alliance = DriverStation.getAlliance();
@@ -181,8 +174,7 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     leftOut.Output = (x + y) * limit;
     rightOut.Output = (x - y) * limit;
     m_leftLeader.setControl(leftOut);
-    m_rightLeader.setControl(rightOut);
-    
+    m_rightLeader.setControl(rightOut); 
   }
 
   //Odometry functions
@@ -204,8 +196,8 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
     
     speeds.desaturate(3);
     
-    final double leftFeedforward = feedforward.calculate(speeds.leftMetersPerSecond);
-    final double rightFeedforward = feedforward.calculate(speeds.rightMetersPerSecond);
+    final double leftFeedforward = leftfeedforward.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedforward = rightfeedforward.calculate(speeds.rightMetersPerSecond);
 
     final double leftOutput =
       LeftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
@@ -228,17 +220,8 @@ private Encoder m_rightEncoder = new Encoder(6, 7);
   }
 
   public Command stop(){
-    return runEnd(
-        () -> {
-          musics.play();
-        },
-        ()->{
-          musics.stop();
-        });
-  }
-
-
-
+    return runEnd(() -> {musics.play();},()->{musics.stop();});}
+    
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

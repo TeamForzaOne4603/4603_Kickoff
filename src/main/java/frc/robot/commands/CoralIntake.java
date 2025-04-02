@@ -33,12 +33,11 @@ public class CoralIntake extends Command {
   @Override
   public void initialize() {
     check = false;
-    timer.stop();
+    timecheck = false;
+    check = false;
+    detect = false;
     timer.reset();
-    timer.stop();
-    timer2.stop();
     timer2.reset();
-    timer2.stop();
   }
 
   @Override
@@ -50,7 +49,7 @@ public class CoralIntake extends Command {
     }
     if(check == false && coral.getLaser() < 90) {
       
-      coral.setSpeed(0.18);
+      coral.setSpeed(0.3);
     }
 
     //Starts timer when the colorsensor detects a coral

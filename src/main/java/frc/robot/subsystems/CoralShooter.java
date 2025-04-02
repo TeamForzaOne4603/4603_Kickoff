@@ -81,8 +81,8 @@ public class CoralShooter extends SubsystemBase {
           m_rightMotor.set(0.15);
           m_leftMotor.set(0.15);
         }else {
-          m_rightMotor.set(0.4);
-          m_leftMotor.set(0.4);
+          m_rightMotor.set(0.5);
+          m_leftMotor.set(0.5);
         }
       }
       ,()->{
@@ -99,8 +99,8 @@ public class CoralShooter extends SubsystemBase {
       m_rightMotor.set(0.15);
       m_leftMotor.set(0.15);
     }else {
-      m_rightMotor.set(0.4);
-      m_leftMotor.set(0.4);}
+      m_rightMotor.set(0.5);
+      m_leftMotor.set(0.5);}
   }
 
  public double getLaser(){

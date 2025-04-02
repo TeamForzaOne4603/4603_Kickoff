@@ -32,6 +32,6 @@ public class IsInPositionElevator extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevator.isInPosition();
+    return elevator.getPosition() < 26;
   }
 }

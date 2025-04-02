@@ -11,6 +11,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class LedLights extends SubsystemBase {
   /** Creates a new LedLights. */
+  private static LedLights mInstance;
+
+  public static LedLights getInstance() {
+    if (mInstance == null) {
+      mInstance = new LedLights();
+    }
+    return mInstance;
+  }
+
   private Spark leds = new Spark(9);
 
 

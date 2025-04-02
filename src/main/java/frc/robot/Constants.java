@@ -15,7 +15,7 @@ public class Constants {
         public static final int k_rightFollower = 4;
         public static final int k_pygeon = 13;
 
-        public static final int k_statorLimit = 120;//160
+        public static final int k_statorLimit = 160;
         public static final int k_supplyLimit = 60;
 
         public static final double k_encoderCPR = 2048;
@@ -76,6 +76,8 @@ public class Constants {
         public static final double kL3Height = 35.4;
         public static final double kL4Height = 73.94;
         public static final double kMaxHeight = 74;
+
+        //65%
 
         //0.7 10.4 71.75.35.4
 
