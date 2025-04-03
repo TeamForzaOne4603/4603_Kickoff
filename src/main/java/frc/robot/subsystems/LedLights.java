@@ -20,7 +20,7 @@ public class LedLights extends SubsystemBase {
     return mInstance;
   }
 
-  private Spark leds = new Spark(9);
+  private Spark leds = new Spark(8);
 
 
   public LedLights() {

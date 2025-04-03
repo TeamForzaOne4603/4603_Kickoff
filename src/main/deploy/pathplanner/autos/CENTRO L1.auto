@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Salida_Rojo"
+            "pathName": "CENTRO"
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Human_Rojo"
+            "waitTime": 0.15
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Segundo_Rojo"
+            "name": "L1"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "INFERIOR",
+  "folder": "CENTRO",
   "choreoAuto": false
 }

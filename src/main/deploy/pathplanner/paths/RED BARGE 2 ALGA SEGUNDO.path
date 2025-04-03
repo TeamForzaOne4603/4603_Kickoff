@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6,
-        "y": 0.72
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 2.5750799417967785,
-        "y": 2.1125584752912863
-      },
-      "isLocked": false,
-      "linkedName": "HUMAN ROJO"
-    },
-    {
-      "anchor": {
         "x": 3.96,
         "y": 2.81
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.3760328809252425,
+        "y": 1.6638999972343036
+      },
+      "isLocked": false,
+      "linkedName": "RED BARGE 2 ALGA SEGUNDO"
+    },
+    {
+      "anchor": {
+        "x": 1.511,
+        "y": 0.77
+      },
       "prevControl": {
-        "x": 3.4751903797536627,
-        "y": 1.9353802928606045
+        "x": 2.202475504112415,
+        "y": 1.7951545930797377
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RED BARGE 2 ALGA SEGUNDO"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -44,7 +44,7 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "reversed": false,
+  "reversed": true,
   "folder": "INFERIOR",
   "idealStartingState": {
     "velocity": 0,

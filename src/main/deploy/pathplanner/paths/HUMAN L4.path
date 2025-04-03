@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.67,
-        "y": 5.11
+        "x": 3.6999999999999997,
+        "y": 5.1
       },
       "prevControl": {
-        "x": 3.065763005238769,
-        "y": 6.115619232858254
+        "x": 3.095763005238769,
+        "y": 6.1056192328582535
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ALGA BARGE 2"
     }
   ],
   "rotationTargets": [],

@@ -23,21 +23,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Check"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "CORAL HUMAN"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
           }
         },
         {
@@ -53,15 +41,45 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "L4"
+            "name": "L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BajarAlga"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Check"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ALGA BARGE 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SubirAlga"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         }
       ]

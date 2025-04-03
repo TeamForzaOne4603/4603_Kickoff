@@ -44,7 +44,7 @@ public class NewElevator extends SubsystemBase {
       m_encoder.setReverseDirection(false);  
   
       SparkMaxConfig elevatorConfig = new SparkMaxConfig();
-      elevatorConfig.smartCurrentLimit(40);
+      elevatorConfig.smartCurrentLimit(50);
       elevatorConfig.idleMode(IdleMode.kBrake);
       elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
       m_leftMotor.configure(elevatorConfig, com.revrobotics.spark.SparkBase.ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -57,7 +57,7 @@ public class NewElevator extends SubsystemBase {
     @Override
     public void periodic() {
       // This method will be called once per scheduler run
-      if (isInPositionControl && CoralShooter.getInstance().getLaser()>90) {
+      if (isInPositionControl && CoralShooter.getInstance().getLaser()>190) {
         m_leftMotor.setVoltage(m_controller.calculate(m_encoder.getDistance(), setPoint) + m_feedforward.calculate(m_controller.getSetpoint().velocity));
       }
       SmartDashboard.putBoolean("IsInPosition", isInPosition());

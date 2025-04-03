@@ -5,6 +5,30 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "INICIO CORAL"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CORAL HUMAN"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Intake"
@@ -14,6 +38,12 @@
           "type": "path",
           "data": {
             "pathName": "Segundo Blue"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.15
           }
         },
         {
@@ -32,18 +62,6 @@
           "type": "named",
           "data": {
             "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SEGUNDO CORAL HUMAN"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L3"
           }
         }
       ]

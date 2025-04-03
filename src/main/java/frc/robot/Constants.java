@@ -61,20 +61,20 @@ public class Constants {
         public static final  int k_rightMotor = 24;
         public static final  int k_leftMotor = 25;
 
-        public static final double k_P = 1.4;
+        public static final double k_P = 1.9;
         public static final double k_I = 0;
         public static final double k_D = 0;
         public static final double k_IZone = 17;
-        public static final double k_G = 0.2;
-        public static final double k_maxVelocity = 90;
-        public static final double k_maxAcceleration = 170;
-        public static final double k_V = 0.55;
-        public static final double k_S = 0.09;
+        public static final double k_G = 0.25;
+        public static final double k_maxVelocity = 100;
+        public static final double k_maxAcceleration = 205;
+        public static final double k_V = 0.25;
+        public static final double k_S = 0.05;
 
-        public static final double kStowHeight = 0.30;
+        public static final double kStowHeight = 0.55;
         public static final double kL2Height = 10.6;
         public static final double kL3Height = 35.4;
-        public static final double kL4Height = 73.94;
+        public static final double kL4Height = 73.88;
         public static final double kMaxHeight = 74;
 
         //65%

@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Regreso Rojo"
+            "pathName": "Segundo_Rojo"
           }
         },
         {
@@ -49,19 +49,19 @@
         {
           "type": "named",
           "data": {
-            "name": "L3"
+            "name": "L2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RED BARGE 2 SEGUNDO"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "BajarAlga"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Check"
+            "name": "Intake"
           }
         }
       ]
